@@ -287,3 +287,111 @@ test("CommandList preserves the original command order for multiple matches", ()
 
   expect(getByTestId("list").textContent).toBe("Copy fileColor picker");
 });
+
+test("without the portal prop, CommandPalette renders in place", () => {
+  const commands = [makeCommand("a")];
+
+  const { container } = render(
+    <CmdoraProvider>
+      <CommandPalette commands={commands} data-testid="palette" />
+    </CmdoraProvider>,
+  );
+
+  openPalette();
+
+  expect(container.querySelector('[data-testid="palette"]')).not.toBeNull();
+  expect(document.body.querySelector('[data-testid="palette"]')).toBe(
+    container.querySelector('[data-testid="palette"]'),
+  );
+});
+
+test("portal={true} renders the palette into document.body", () => {
+  const commands = [makeCommand("a")];
+
+  const { container } = render(
+    <CmdoraProvider>
+      <CommandPalette commands={commands} portal data-testid="palette" />
+    </CmdoraProvider>,
+  );
+
+  openPalette();
+
+  expect(container.querySelector('[data-testid="palette"]')).toBeNull();
+
+  const portaled = document.body.querySelector('[data-testid="palette"]');
+  expect(portaled).not.toBeNull();
+  expect(container.contains(portaled)).toBe(false);
+});
+
+test("portal accepts a custom container element", () => {
+  const commands = [makeCommand("a")];
+  const customContainer = document.createElement("div");
+  document.body.appendChild(customContainer);
+
+  const { container } = render(
+    <CmdoraProvider>
+      <CommandPalette commands={commands} portal={customContainer} data-testid="palette" />
+    </CmdoraProvider>,
+  );
+
+  openPalette();
+
+  expect(container.querySelector('[data-testid="palette"]')).toBeNull();
+  expect(customContainer.querySelector('[data-testid="palette"]')).not.toBeNull();
+
+  document.body.removeChild(customContainer);
+});
+
+test("portaled content is removed from the DOM when the palette closes", () => {
+  const commands = [makeCommand("a")];
+
+  render(
+    <CmdoraProvider>
+      <CommandPalette commands={commands} portal data-testid="palette" />
+    </CmdoraProvider>,
+  );
+
+  openPalette();
+  expect(document.body.querySelector('[data-testid="palette"]')).not.toBeNull();
+
+  act(() => {
+    fireEvent.keyDown(document, { key: "k", ctrlKey: true });
+  });
+
+  expect(document.body.querySelector('[data-testid="palette"]')).toBeNull();
+});
+
+test("portaled content is removed from the DOM on unmount", () => {
+  const commands = [makeCommand("a")];
+
+  const { unmount } = render(
+    <CmdoraProvider>
+      <CommandPalette commands={commands} portal data-testid="palette" />
+    </CmdoraProvider>,
+  );
+
+  openPalette();
+  expect(document.body.querySelector('[data-testid="palette"]')).not.toBeNull();
+
+  unmount();
+
+  expect(document.body.querySelector('[data-testid="palette"]')).toBeNull();
+});
+
+test("portal is not required to use CommandPalette's hooks and components", () => {
+  const commands = [namedCommand("a", "Say hello")];
+
+  const { container } = render(
+    <CmdoraProvider>
+      <CommandPalette commands={commands}>
+        <CommandInput data-testid="input" />
+        <CommandList data-testid="list" />
+      </CommandPalette>
+    </CmdoraProvider>,
+  );
+
+  openPalette();
+
+  expect(container.querySelector('[data-testid="input"]')).not.toBeNull();
+  expect(container.querySelector('[data-testid="list"]')?.textContent).toBe("Say hello");
+});
