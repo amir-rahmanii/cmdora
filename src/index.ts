@@ -3,3 +3,5 @@ export interface Command {
   name: string;
   execute: () => void | Promise<void>;
 }
+
+export { CommandRegistry } from "./registry.ts";
