@@ -1,41 +1,29 @@
-import { useEffect, useState } from "react";
-import { useCmdora, useCommandPalette, type Command } from "cmdora";
+import { useState } from "react";
+import { useCommandPalette, type Command } from "cmdora";
 
 export function App() {
-  const registry = useCmdora();
-  const { isOpen, close, toggle } = useCommandPalette();
   const [message, setMessage] = useState("No command run yet.");
   const [count, setCount] = useState(0);
 
-  useEffect(() => {
-    const commands: Command[] = [
-      {
-        id: "say-hello",
-        name: "Say hello",
-        execute: () => setMessage("Hello from Cmdora!"),
-      },
-      {
-        id: "increment-counter",
-        name: "Increment counter",
-        execute: () => setCount((current) => current + 1),
-      },
-      {
-        id: "toggle-dark-mode",
-        name: "Toggle dark mode",
-        execute: () => document.body.classList.toggle("dark"),
-      },
-    ];
+  const commands: Command[] = [
+    {
+      id: "say-hello",
+      name: "Say hello",
+      execute: () => setMessage("Hello from Cmdora!"),
+    },
+    {
+      id: "increment-counter",
+      name: "Increment counter",
+      execute: () => setCount((current) => current + 1),
+    },
+    {
+      id: "toggle-dark-mode",
+      name: "Toggle dark mode",
+      execute: () => document.body.classList.toggle("dark"),
+    },
+  ];
 
-    for (const command of commands) {
-      registry.register(command);
-    }
-
-    return () => {
-      for (const command of commands) {
-        registry.unregister(command.id);
-      }
-    };
-  }, [registry]);
+  const { isOpen, close, toggle, commands: registeredCommands } = useCommandPalette(commands);
 
   return (
     <main className="app">
@@ -61,7 +49,7 @@ export function App() {
             </button>
           </div>
           <ul className="palette-list">
-            {registry.getAll().map((command) => (
+            {registeredCommands.map((command) => (
               <li key={command.id}>
                 <button
                   type="button"

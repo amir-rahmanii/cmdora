@@ -3,6 +3,7 @@ import { act, cleanup, fireEvent, render, renderHook } from "@testing-library/re
 import { CmdoraProvider, useCmdora, useCommandPalette, useCommandState } from "../src/provider.tsx";
 import { CommandRegistry } from "../src/registry.ts";
 import { CommandStateStore } from "../src/state.ts";
+import type { Command } from "../src/index.ts";
 
 afterEach(() => {
   cleanup();
@@ -225,6 +226,86 @@ test("Ctrl+K listener is removed after unmount", () => {
 
   expect(event.defaultPrevented).toBe(false);
   expect(result.current.isOpen).toBe(false);
+});
+
+test("useCommandPalette starts with an empty commands array by default", () => {
+  const { result } = renderHook(() => useCommandPalette(), {
+    wrapper: CmdoraProvider,
+  });
+
+  expect(result.current.commands).toEqual([]);
+});
+
+test("useCommandPalette returns the commands it was given", () => {
+  const commands: Command[] = [
+    { id: "a", name: "A", execute: () => {} },
+    { id: "b", name: "B", execute: () => {} },
+  ];
+
+  const { result } = renderHook(() => useCommandPalette(commands), {
+    wrapper: CmdoraProvider,
+  });
+
+  expect(result.current.commands).toEqual(commands);
+});
+
+test("useCommandPalette registers commands on the underlying registry", () => {
+  const commands: Command[] = [{ id: "a", name: "A", execute: () => {} }];
+
+  function useTestHooks(cmds: Command[]) {
+    const palette = useCommandPalette(cmds);
+    const registry = useCmdora();
+    return { palette, registry };
+  }
+
+  const { result } = renderHook(() => useTestHooks(commands), {
+    wrapper: CmdoraProvider,
+  });
+
+  expect(result.current.registry.get("a")).toBe(commands[0]);
+});
+
+test("useCommandPalette unregisters commands no longer passed in", () => {
+  const commandA: Command = { id: "a", name: "A", execute: () => {} };
+  const commandB: Command = { id: "b", name: "B", execute: () => {} };
+
+  function useTestHooks(cmds: Command[]) {
+    const palette = useCommandPalette(cmds);
+    const registry = useCmdora();
+    return { palette, registry };
+  }
+
+  const { result, rerender } = renderHook(({ cmds }) => useTestHooks(cmds), {
+    wrapper: CmdoraProvider,
+    initialProps: { cmds: [commandA, commandB] },
+  });
+
+  expect(result.current.registry.get("b")).toBe(commandB);
+
+  rerender({ cmds: [commandA] });
+
+  expect(result.current.registry.get("b")).toBeUndefined();
+  expect(result.current.registry.get("a")).toBe(commandA);
+});
+
+test("useCommandPalette unregisters commands on unmount", () => {
+  const commands: Command[] = [{ id: "a", name: "A", execute: () => {} }];
+
+  function useTestHooks(cmds: Command[]) {
+    const palette = useCommandPalette(cmds);
+    const registry = useCmdora();
+    return { palette, registry };
+  }
+
+  const { result, unmount } = renderHook(() => useTestHooks(commands), {
+    wrapper: CmdoraProvider,
+  });
+
+  expect(result.current.registry.get("a")).toBe(commands[0]);
+
+  unmount();
+
+  expect(result.current.registry.get("a")).toBeUndefined();
 });
 
 test("CmdoraProvider renders its children", () => {

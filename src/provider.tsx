@@ -6,6 +6,7 @@ import {
   useSyncExternalStore,
   type ReactNode,
 } from "react";
+import type { Command } from "./index.ts";
 import { CommandRegistry } from "./registry.ts";
 import { CommandStateStore } from "./state.ts";
 
@@ -71,20 +72,35 @@ export function useCommandState(): CommandStateStore {
 }
 
 export interface CommandPalette {
+  commands: Command[];
   isOpen: boolean;
   open: () => void;
   close: () => void;
   toggle: () => void;
 }
 
-export function useCommandPalette(): CommandPalette {
+export function useCommandPalette(commands: Command[] = []): CommandPalette {
+  const registry = useCmdora();
   const state = useCommandState();
+
+  useEffect(() => {
+    for (const command of commands) {
+      registry.register(command);
+    }
+    return () => {
+      for (const command of commands) {
+        registry.unregister(command.id);
+      }
+    };
+  }, [registry, commands]);
+
   const isOpen = useSyncExternalStore(
     (listener) => state.subscribe(listener),
     () => state.getState().isOpen,
   );
 
   return {
+    commands,
     isOpen,
     open: () => state.open(),
     close: () => state.close(),
