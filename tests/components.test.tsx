@@ -6,6 +6,7 @@ import type { Command } from "../src/index.ts";
 
 afterEach(() => {
   cleanup();
+  document.body.style.overflow = "";
 });
 
 function makeCommand(id: string, onExecute?: () => void): Command {
@@ -31,16 +32,16 @@ function openPalette(): void {
 test("CommandPalette renders nothing while closed", () => {
   const commands = [makeCommand("a")];
 
-  const { container } = render(
+  render(
     <CmdoraProvider>
       <CommandPalette commands={commands} data-testid="palette" />
     </CmdoraProvider>,
   );
 
-  expect(container.querySelector('[data-testid="palette"]')).toBeNull();
+  expect(document.body.querySelector('[data-testid="palette"]')).toBeNull();
 });
 
-test("CommandPalette renders its children once opened", () => {
+test("CommandPalette renders its children through a portal once opened", () => {
   const commands = [makeCommand("a")];
 
   const { container } = render(
@@ -53,30 +54,65 @@ test("CommandPalette renders its children once opened", () => {
 
   openPalette();
 
-  expect(container.querySelector('[data-testid="palette"]')).not.toBeNull();
-  expect(container.textContent).toContain("content");
+  const palette = document.body.querySelector('[data-testid="palette"]');
+  expect(palette).not.toBeNull();
+  expect(palette?.textContent).toContain("content");
+  expect(container.contains(palette)).toBe(false);
 });
 
 test("CommandPalette forwards className and native div attributes", () => {
   const commands = [makeCommand("a")];
 
-  const { container } = render(
+  render(
     <CmdoraProvider>
-      <CommandPalette commands={commands} className="my-palette" aria-label="Commands" />
+      <CommandPalette commands={commands} className="my-palette" />
     </CmdoraProvider>,
   );
 
   openPalette();
 
-  const palette = container.querySelector(".my-palette");
+  const palette = document.body.querySelector(".my-palette");
   expect(palette).not.toBeNull();
+});
+
+test("CommandPalette has dialog semantics with an accessible name", () => {
+  const commands = [makeCommand("a")];
+
+  render(
+    <CmdoraProvider>
+      <CommandPalette commands={commands} data-testid="palette" />
+    </CmdoraProvider>,
+  );
+
+  openPalette();
+
+  const palette = document.body.querySelector('[data-testid="palette"]');
+  expect(palette?.getAttribute("role")).toBe("dialog");
+  expect(palette?.getAttribute("aria-modal")).toBe("true");
+  expect(palette?.hasAttribute("aria-label") || palette?.hasAttribute("aria-labelledby")).toBe(
+    true,
+  );
+});
+
+test("a custom aria-label overrides the default accessible name", () => {
+  const commands = [makeCommand("a")];
+
+  render(
+    <CmdoraProvider>
+      <CommandPalette commands={commands} data-testid="palette" aria-label="Commands" />
+    </CmdoraProvider>,
+  );
+
+  openPalette();
+
+  const palette = document.body.querySelector('[data-testid="palette"]');
   expect(palette?.getAttribute("aria-label")).toBe("Commands");
 });
 
 test("CommandList renders a listbox by default", () => {
   const commands = [makeCommand("a")];
 
-  const { container } = render(
+  const { getByTestId } = render(
     <CmdoraProvider>
       <CommandPalette commands={commands}>
         <CommandList data-testid="list" />
@@ -86,8 +122,7 @@ test("CommandList renders a listbox by default", () => {
 
   openPalette();
 
-  const list = container.querySelector('[data-testid="list"]');
-  expect(list?.getAttribute("role")).toBe("listbox");
+  expect(getByTestId("list").getAttribute("role")).toBe("listbox");
 });
 
 test("CommandList automatically renders all commands without any consumer mapping", () => {
@@ -134,7 +169,7 @@ test("activating a rendered command executes it and closes the palette", () => {
     executed = true;
   });
 
-  const { container, getByText } = render(
+  const { getByText } = render(
     <CmdoraProvider>
       <CommandPalette commands={[command]} data-testid="palette">
         <CommandList />
@@ -149,7 +184,7 @@ test("activating a rendered command executes it and closes the palette", () => {
   });
 
   expect(executed).toBe(true);
-  expect(container.querySelector('[data-testid="palette"]')).toBeNull();
+  expect(document.body.querySelector('[data-testid="palette"]')).toBeNull();
 });
 
 test("activating a rendered command with Enter executes it", () => {
@@ -288,87 +323,43 @@ test("CommandList preserves the original command order for multiple matches", ()
   expect(getByTestId("list").textContent).toBe("Copy fileColor picker");
 });
 
-test("without the portal prop, CommandPalette renders in place", () => {
-  const commands = [makeCommand("a")];
+// Modal behavior: portal, escape, outside click, focus management, body scroll lock.
 
-  const { container } = render(
-    <CmdoraProvider>
-      <CommandPalette commands={commands} data-testid="palette" />
-    </CmdoraProvider>,
+function renderModal(commands: Command[]) {
+  const utils = render(
+    <>
+      <button data-testid="trigger">Open trigger</button>
+      <CmdoraProvider>
+        <CommandPalette commands={commands} data-testid="palette">
+          <CommandInput data-testid="input" />
+          <CommandList data-testid="list" />
+        </CommandPalette>
+      </CmdoraProvider>
+    </>,
   );
 
-  openPalette();
+  const trigger = utils.getByTestId("trigger") as HTMLButtonElement;
+  trigger.focus();
 
-  expect(container.querySelector('[data-testid="palette"]')).not.toBeNull();
-  expect(document.body.querySelector('[data-testid="palette"]')).toBe(
-    container.querySelector('[data-testid="palette"]'),
-  );
-});
-
-test("portal={true} renders the palette into document.body", () => {
-  const commands = [makeCommand("a")];
-
-  const { container } = render(
-    <CmdoraProvider>
-      <CommandPalette commands={commands} portal data-testid="palette" />
-    </CmdoraProvider>,
-  );
-
-  openPalette();
-
-  expect(container.querySelector('[data-testid="palette"]')).toBeNull();
-
-  const portaled = document.body.querySelector('[data-testid="palette"]');
-  expect(portaled).not.toBeNull();
-  expect(container.contains(portaled)).toBe(false);
-});
-
-test("portal accepts a custom container element", () => {
-  const commands = [makeCommand("a")];
-  const customContainer = document.createElement("div");
-  document.body.appendChild(customContainer);
-
-  const { container } = render(
-    <CmdoraProvider>
-      <CommandPalette commands={commands} portal={customContainer} data-testid="palette" />
-    </CmdoraProvider>,
-  );
-
-  openPalette();
-
-  expect(container.querySelector('[data-testid="palette"]')).toBeNull();
-  expect(customContainer.querySelector('[data-testid="palette"]')).not.toBeNull();
-
-  document.body.removeChild(customContainer);
-});
+  return { ...utils, trigger };
+}
 
 test("portaled content is removed from the DOM when the palette closes", () => {
   const commands = [makeCommand("a")];
 
-  render(
-    <CmdoraProvider>
-      <CommandPalette commands={commands} portal data-testid="palette" />
-    </CmdoraProvider>,
-  );
+  renderModal(commands);
 
   openPalette();
   expect(document.body.querySelector('[data-testid="palette"]')).not.toBeNull();
 
-  act(() => {
-    fireEvent.keyDown(document, { key: "k", ctrlKey: true });
-  });
-
+  openPalette();
   expect(document.body.querySelector('[data-testid="palette"]')).toBeNull();
 });
 
 test("portaled content is removed from the DOM on unmount", () => {
   const commands = [makeCommand("a")];
 
-  const { unmount } = render(
-    <CmdoraProvider>
-      <CommandPalette commands={commands} portal data-testid="palette" />
-    </CmdoraProvider>,
-  );
+  const { unmount } = renderModal(commands);
 
   openPalette();
   expect(document.body.querySelector('[data-testid="palette"]')).not.toBeNull();
@@ -378,20 +369,110 @@ test("portaled content is removed from the DOM on unmount", () => {
   expect(document.body.querySelector('[data-testid="palette"]')).toBeNull();
 });
 
-test("portal is not required to use CommandPalette's hooks and components", () => {
-  const commands = [namedCommand("a", "Say hello")];
+test("Escape closes the palette", () => {
+  const commands = [makeCommand("a")];
 
-  const { container } = render(
-    <CmdoraProvider>
-      <CommandPalette commands={commands}>
-        <CommandInput data-testid="input" />
-        <CommandList data-testid="list" />
-      </CommandPalette>
-    </CmdoraProvider>,
-  );
-
+  renderModal(commands);
   openPalette();
 
-  expect(container.querySelector('[data-testid="input"]')).not.toBeNull();
-  expect(container.querySelector('[data-testid="list"]')?.textContent).toBe("Say hello");
+  expect(document.body.querySelector('[data-testid="palette"]')).not.toBeNull();
+
+  act(() => {
+    fireEvent.keyDown(document, { key: "Escape" });
+  });
+
+  expect(document.body.querySelector('[data-testid="palette"]')).toBeNull();
+});
+
+test("clicking outside the dialog closes the palette", () => {
+  const commands = [makeCommand("a")];
+
+  renderModal(commands);
+  openPalette();
+
+  act(() => {
+    fireEvent.mouseDown(document.body);
+  });
+
+  expect(document.body.querySelector('[data-testid="palette"]')).toBeNull();
+});
+
+test("clicking inside the dialog does not close the palette", () => {
+  const commands = [namedCommand("a", "Say hello")];
+
+  const { getByTestId } = renderModal(commands);
+  openPalette();
+
+  act(() => {
+    fireEvent.mouseDown(getByTestId("input"));
+  });
+
+  expect(document.body.querySelector('[data-testid="palette"]')).not.toBeNull();
+});
+
+test("CommandInput receives focus when the palette opens", () => {
+  const commands = [makeCommand("a")];
+
+  const { getByTestId } = renderModal(commands);
+  openPalette();
+
+  expect(document.activeElement).toBe(getByTestId("input"));
+});
+
+test("focus is restored to the previously focused element when the palette closes", () => {
+  const commands = [makeCommand("a")];
+
+  const { trigger } = renderModal(commands);
+
+  expect(document.activeElement).toBe(trigger);
+
+  openPalette();
+  expect(document.activeElement).not.toBe(trigger);
+
+  openPalette();
+  expect(document.activeElement).toBe(trigger);
+});
+
+test("body scrolling is disabled while the palette is open and restored afterward", () => {
+  const commands = [makeCommand("a")];
+
+  document.body.style.overflow = "auto";
+  renderModal(commands);
+
+  openPalette();
+  expect(document.body.style.overflow).toBe("hidden");
+
+  openPalette();
+  expect(document.body.style.overflow).toBe("auto");
+});
+
+test("repeated open/close cycles do not leak listeners or break behavior", () => {
+  const commands = [makeCommand("a")];
+
+  const { trigger } = renderModal(commands);
+
+  for (let i = 0; i < 3; i++) {
+    openPalette();
+    expect(document.body.querySelector('[data-testid="palette"]')).not.toBeNull();
+    act(() => {
+      fireEvent.keyDown(document, { key: "Escape" });
+    });
+    expect(document.body.querySelector('[data-testid="palette"]')).toBeNull();
+  }
+
+  expect(document.activeElement).toBe(trigger);
+  expect(document.body.style.overflow).toBe("");
+});
+
+test("unmounting while open cleans up body overflow", () => {
+  const commands = [makeCommand("a")];
+
+  const { unmount } = renderModal(commands);
+
+  openPalette();
+  expect(document.body.style.overflow).toBe("hidden");
+
+  unmount();
+
+  expect(document.body.style.overflow).toBe("");
 });

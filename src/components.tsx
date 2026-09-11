@@ -1,7 +1,9 @@
 import {
   createContext,
   useContext,
+  useEffect,
   useMemo,
+  useRef,
   useSyncExternalStore,
   type ComponentPropsWithoutRef,
   type KeyboardEvent as ReactKeyboardEvent,
@@ -23,14 +25,9 @@ function useCommandPaletteContext(hookName: string): UseCommandPaletteResult {
 
 export interface CommandPaletteProps extends ComponentPropsWithoutRef<"div"> {
   commands: Command[];
-  /**
-   * Render the palette through a React portal instead of in place.
-   * Pass `true` to portal into `document.body`, or an element to portal into it directly.
-   */
-  portal?: boolean | Element | DocumentFragment;
 }
 
-export function CommandPalette({ commands, portal, ...rest }: CommandPaletteProps) {
+export function CommandPalette({ commands, ...rest }: CommandPaletteProps) {
   const palette = useCommandPalette(commands);
   const state = useCommandState();
   const query = useSyncExternalStore(
@@ -43,22 +40,54 @@ export function CommandPalette({ commands, portal, ...rest }: CommandPaletteProp
     [palette.commands, query],
   );
 
+  const dialogRef = useRef<HTMLDivElement | null>(null);
+  const closeRef = useRef(palette.close);
+  closeRef.current = palette.close;
+
+  useEffect(() => {
+    if (!palette.isOpen) {
+      return;
+    }
+
+    const previouslyFocused = document.activeElement as HTMLElement | null;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    dialogRef.current?.querySelector<HTMLInputElement>("input")?.focus();
+
+    function handleKeyDown(event: KeyboardEvent): void {
+      if (event.key === "Escape") {
+        closeRef.current();
+      }
+    }
+
+    function handlePointerDown(event: MouseEvent): void {
+      if (dialogRef.current && !dialogRef.current.contains(event.target as Node)) {
+        closeRef.current();
+      }
+    }
+
+    document.addEventListener("keydown", handleKeyDown);
+    document.addEventListener("mousedown", handlePointerDown);
+
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+      document.removeEventListener("mousedown", handlePointerDown);
+      document.body.style.overflow = previousOverflow;
+      previouslyFocused?.focus();
+    };
+  }, [palette.isOpen]);
+
   if (!palette.isOpen) {
     return null;
   }
 
-  const content = (
+  return createPortal(
     <CommandPaletteContext.Provider value={{ ...palette, commands: filteredCommands }}>
-      <div {...rest} />
-    </CommandPaletteContext.Provider>
+      <div role="dialog" aria-modal="true" aria-label="Command palette" {...rest} ref={dialogRef} />
+    </CommandPaletteContext.Provider>,
+    document.body,
   );
-
-  if (!portal) {
-    return content;
-  }
-
-  const container = portal === true ? document.body : portal;
-  return createPortal(content, container);
 }
 
 export interface CommandInputProps extends Omit<ComponentPropsWithoutRef<"input">, "value"> {}
