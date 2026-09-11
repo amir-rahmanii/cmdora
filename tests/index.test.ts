@@ -24,7 +24,6 @@ test("public API exposes only the intended runtime exports", () => {
   expect(Object.keys(CmdoraPublicApi).sort()).toEqual([
     "CmdoraProvider",
     "CommandInput",
-    "CommandItem",
     "CommandList",
     "CommandPalette",
     "useCommandPalette",

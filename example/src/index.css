@@ -64,14 +64,14 @@ button {
   gap: 0.25rem;
 }
 
-.palette-item {
+.palette-list [role="option"] {
   padding: 0.5rem 0.75rem;
   border-radius: 6px;
   cursor: pointer;
 }
 
-.palette-item:hover,
-.palette-item:focus-visible {
+.palette-list [role="option"]:hover,
+.palette-list [role="option"]:focus-visible {
   background: rgba(128, 128, 128, 0.25);
   outline: 2px solid currentColor;
 }

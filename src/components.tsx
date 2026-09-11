@@ -1,13 +1,10 @@
 import {
   createContext,
-  Fragment,
   useContext,
   useMemo,
   useSyncExternalStore,
   type ComponentPropsWithoutRef,
   type KeyboardEvent as ReactKeyboardEvent,
-  type MouseEvent as ReactMouseEvent,
-  type ReactNode,
 } from "react";
 import type { Command } from "./index.ts";
 import { useCommandPalette, useCommandState, type UseCommandPaletteResult } from "./provider.tsx";
@@ -73,36 +70,26 @@ export function CommandInput({ onChange, type = "text", ...rest }: CommandInputP
   );
 }
 
-export interface CommandListProps extends Omit<ComponentPropsWithoutRef<"div">, "children"> {
-  children: (command: Command) => ReactNode;
-}
+export interface CommandListProps extends Omit<ComponentPropsWithoutRef<"div">, "children"> {}
 
-export function CommandList({ role = "listbox", children, ...rest }: CommandListProps) {
-  const { commands } = useCommandPaletteContext("CommandList");
+export function CommandList({ role = "listbox", ...rest }: CommandListProps) {
+  const { commands, close } = useCommandPaletteContext("CommandList");
 
   return (
     <div role={role} {...rest}>
       {commands.map((command) => (
-        <Fragment key={command.id}>{children(command)}</Fragment>
+        <CommandListItem key={command.id} command={command} close={close} />
       ))}
     </div>
   );
 }
 
-export interface CommandItemProps extends ComponentPropsWithoutRef<"div"> {
+interface CommandListItemProps {
   command: Command;
+  close: () => void;
 }
 
-export function CommandItem({
-  command,
-  onClick,
-  onKeyDown,
-  role = "option",
-  tabIndex = 0,
-  ...rest
-}: CommandItemProps) {
-  const { close } = useCommandPaletteContext("CommandItem");
-
+function CommandListItem({ command, close }: CommandListItemProps) {
   function select(): void {
     void command.execute();
     close();
@@ -110,20 +97,17 @@ export function CommandItem({
 
   return (
     <div
-      role={role}
-      tabIndex={tabIndex}
-      {...rest}
-      onClick={(event: ReactMouseEvent<HTMLDivElement>) => {
-        onClick?.(event);
-        select();
-      }}
+      role="option"
+      tabIndex={0}
+      onClick={select}
       onKeyDown={(event: ReactKeyboardEvent<HTMLDivElement>) => {
-        onKeyDown?.(event);
         if (event.key === "Enter" || event.key === " ") {
           event.preventDefault();
           select();
         }
       }}
-    />
+    >
+      {command.name}
+    </div>
   );
 }

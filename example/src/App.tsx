@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { CommandInput, CommandItem, CommandList, CommandPalette, type Command } from "cmdora";
+import { CommandInput, CommandList, CommandPalette, type Command } from "cmdora";
 
 export function App() {
   const [message, setMessage] = useState("No command run yet.");
@@ -35,13 +35,7 @@ export function App() {
 
       <CommandPalette commands={commands} className="palette">
         <CommandInput className="palette-input" placeholder="Type a command..." autoFocus />
-        <CommandList className="palette-list">
-          {(command) => (
-            <CommandItem command={command} className="palette-item">
-              {command.name}
-            </CommandItem>
-          )}
-        </CommandList>
+        <CommandList className="palette-list" />
       </CommandPalette>
     </main>
   );
