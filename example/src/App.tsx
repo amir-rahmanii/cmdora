@@ -36,11 +36,11 @@ export function App() {
       <CommandPalette commands={commands} className="palette">
         <CommandInput className="palette-input" placeholder="Type a command..." autoFocus />
         <CommandList className="palette-list">
-          {commands.map((command) => (
-            <CommandItem key={command.id} command={command} className="palette-item">
+          {(command) => (
+            <CommandItem command={command} className="palette-item">
               {command.name}
             </CommandItem>
-          ))}
+          )}
         </CommandList>
       </CommandPalette>
     </main>

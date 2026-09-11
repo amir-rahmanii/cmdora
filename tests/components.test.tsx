@@ -75,7 +75,7 @@ test("CommandList renders a listbox by default", () => {
   const { container } = render(
     <CmdoraProvider>
       <CommandPalette commands={commands}>
-        <CommandList data-testid="list" />
+        <CommandList data-testid="list">{() => null}</CommandList>
       </CommandPalette>
     </CmdoraProvider>,
   );
@@ -116,9 +116,7 @@ test("CommandItem executes its command and closes the palette on click", () => {
   const { container, getByText } = render(
     <CmdoraProvider>
       <CommandPalette commands={[command]} data-testid="palette">
-        <CommandList>
-          <CommandItem command={command}>Item A</CommandItem>
-        </CommandList>
+        <CommandList>{(cmd) => <CommandItem command={cmd}>Item A</CommandItem>}</CommandList>
       </CommandPalette>
     </CmdoraProvider>,
   );
@@ -142,9 +140,7 @@ test("CommandItem executes its command on Enter key", () => {
   const { getByText } = render(
     <CmdoraProvider>
       <CommandPalette commands={[command]}>
-        <CommandList>
-          <CommandItem command={command}>Item A</CommandItem>
-        </CommandList>
+        <CommandList>{(cmd) => <CommandItem command={cmd}>Item A</CommandItem>}</CommandList>
       </CommandPalette>
     </CmdoraProvider>,
   );
@@ -164,9 +160,7 @@ test("CommandItem is focusable and has an option role by default", () => {
   const { getByText } = render(
     <CmdoraProvider>
       <CommandPalette commands={[command]}>
-        <CommandList>
-          <CommandItem command={command}>Item A</CommandItem>
-        </CommandList>
+        <CommandList>{(cmd) => <CommandItem command={cmd}>Item A</CommandItem>}</CommandList>
       </CommandPalette>
     </CmdoraProvider>,
   );
@@ -184,4 +178,98 @@ test("CommandItem throws when used outside a CommandPalette", () => {
   expect(() => render(<CommandItem command={command}>Item A</CommandItem>)).toThrow(
     "CommandItem must be used within a CommandPalette",
   );
+});
+
+function renderSearchablePalette(commands: Command[]) {
+  const utils = render(
+    <CmdoraProvider>
+      <CommandPalette commands={commands}>
+        <CommandInput data-testid="input" />
+        <CommandList data-testid="list">
+          {(command) => <CommandItem command={command}>{command.name}</CommandItem>}
+        </CommandList>
+      </CommandPalette>
+    </CmdoraProvider>,
+  );
+
+  openPalette();
+
+  return utils;
+}
+
+function namedCommand(id: string, name: string): Command {
+  return { id, name, execute: () => {} };
+}
+
+test("CommandInput and CommandList share the same query state: empty query shows all commands", () => {
+  const commands = [
+    namedCommand("a", "Say hello"),
+    namedCommand("b", "Increment counter"),
+    namedCommand("c", "Toggle dark mode"),
+  ];
+
+  const { getByTestId } = renderSearchablePalette(commands);
+
+  const list = getByTestId("list");
+  expect(list.textContent).toBe("Say helloIncrement counterToggle dark mode");
+});
+
+test("typing into CommandInput updates the query and filters CommandList", () => {
+  const commands = [
+    namedCommand("a", "Say hello"),
+    namedCommand("b", "Increment counter"),
+    namedCommand("c", "Toggle dark mode"),
+  ];
+
+  const { getByTestId } = renderSearchablePalette(commands);
+  const input = getByTestId("input") as HTMLInputElement;
+
+  fireEvent.change(input, { target: { value: "hello" } });
+
+  expect(input.value).toBe("hello");
+  expect(getByTestId("list").textContent).toBe("Say hello");
+});
+
+test("search is case-insensitive", () => {
+  const commands = [namedCommand("a", "Say hello"), namedCommand("b", "Toggle dark mode")];
+
+  const { getByTestId } = renderSearchablePalette(commands);
+
+  fireEvent.change(getByTestId("input"), { target: { value: "HELLO" } });
+
+  expect(getByTestId("list").textContent).toBe("Say hello");
+});
+
+test("search trims surrounding whitespace", () => {
+  const commands = [namedCommand("a", "Say hello"), namedCommand("b", "Toggle dark mode")];
+
+  const { getByTestId } = renderSearchablePalette(commands);
+
+  fireEvent.change(getByTestId("input"), { target: { value: "  hello  " } });
+
+  expect(getByTestId("list").textContent).toBe("Say hello");
+});
+
+test("unmatched query renders no commands", () => {
+  const commands = [namedCommand("a", "Say hello"), namedCommand("b", "Toggle dark mode")];
+
+  const { getByTestId } = renderSearchablePalette(commands);
+
+  fireEvent.change(getByTestId("input"), { target: { value: "nonexistent" } });
+
+  expect(getByTestId("list").textContent).toBe("");
+});
+
+test("CommandList preserves the original command order for multiple matches", () => {
+  const commands = [
+    namedCommand("x", "Xylophone"),
+    namedCommand("y", "Copy file"),
+    namedCommand("z", "Color picker"),
+  ];
+
+  const { getByTestId } = renderSearchablePalette(commands);
+
+  fireEvent.change(getByTestId("input"), { target: { value: "co" } });
+
+  expect(getByTestId("list").textContent).toBe("Copy fileColor picker");
 });

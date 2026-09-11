@@ -1,13 +1,17 @@
 import {
   createContext,
+  Fragment,
   useContext,
+  useMemo,
   useSyncExternalStore,
   type ComponentPropsWithoutRef,
   type KeyboardEvent as ReactKeyboardEvent,
   type MouseEvent as ReactMouseEvent,
+  type ReactNode,
 } from "react";
 import type { Command } from "./index.ts";
 import { useCommandPalette, useCommandState, type UseCommandPaletteResult } from "./provider.tsx";
+import { filterCommands } from "./search.ts";
 
 const CommandPaletteContext = createContext<UseCommandPaletteResult | null>(null);
 
@@ -25,13 +29,23 @@ export interface CommandPaletteProps extends ComponentPropsWithoutRef<"div"> {
 
 export function CommandPalette({ commands, ...rest }: CommandPaletteProps) {
   const palette = useCommandPalette(commands);
+  const state = useCommandState();
+  const query = useSyncExternalStore(
+    (listener) => state.subscribe(listener),
+    () => state.getState().query,
+  );
+
+  const filteredCommands = useMemo(
+    () => filterCommands(palette.commands, query),
+    [palette.commands, query],
+  );
 
   if (!palette.isOpen) {
     return null;
   }
 
   return (
-    <CommandPaletteContext.Provider value={palette}>
+    <CommandPaletteContext.Provider value={{ ...palette, commands: filteredCommands }}>
       <div {...rest} />
     </CommandPaletteContext.Provider>
   );
@@ -59,10 +73,20 @@ export function CommandInput({ onChange, type = "text", ...rest }: CommandInputP
   );
 }
 
-export interface CommandListProps extends ComponentPropsWithoutRef<"div"> {}
+export interface CommandListProps extends Omit<ComponentPropsWithoutRef<"div">, "children"> {
+  children: (command: Command) => ReactNode;
+}
 
-export function CommandList({ role = "listbox", ...rest }: CommandListProps) {
-  return <div role={role} {...rest} />;
+export function CommandList({ role = "listbox", children, ...rest }: CommandListProps) {
+  const { commands } = useCommandPaletteContext("CommandList");
+
+  return (
+    <div role={role} {...rest}>
+      {commands.map((command) => (
+        <Fragment key={command.id}>{children(command)}</Fragment>
+      ))}
+    </div>
+  );
 }
 
 export interface CommandItemProps extends ComponentPropsWithoutRef<"div"> {
