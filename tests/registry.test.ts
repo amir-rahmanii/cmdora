@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vite-plus/test";
-import { CommandRegistry } from "../src/index.ts";
+import { CommandRegistry } from "../src/registry.ts";
 import type { Command } from "../src/index.ts";
 
 function makeCommand(id: string, name = id): Command {
