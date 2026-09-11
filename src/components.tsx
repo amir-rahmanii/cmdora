@@ -132,18 +132,26 @@ export function CommandInput({ onChange, type = "text", className, ...rest }: Co
   );
 }
 
-export interface CommandListProps extends Omit<ComponentPropsWithoutRef<"div">, "children"> {}
+export interface CommandListProps extends ComponentPropsWithoutRef<"div"> {}
 
-export function CommandList({ className, ...rest }: CommandListProps) {
+export function CommandList({ className, children, ...rest }: CommandListProps) {
   const { commands, close } = useCommandPaletteContext();
 
   return (
     <div {...rest} className={cn("cmdora-list", className)}>
-      {commands.map((command) => (
-        <CommandListItem key={command.id} command={command} close={close} />
-      ))}
+      {commands.length === 0
+        ? (children ?? <CommandEmpty>No commands found</CommandEmpty>)
+        : commands.map((command) => (
+            <CommandListItem key={command.id} command={command} close={close} />
+          ))}
     </div>
   );
+}
+
+export interface CommandEmptyProps extends ComponentPropsWithoutRef<"p"> {}
+
+export function CommandEmpty({ className, ...rest }: CommandEmptyProps) {
+  return <p {...rest} className={cn("cmdora-empty", className)} />;
 }
 
 interface CommandListItemProps {

@@ -21,9 +21,11 @@ body {
     color 0.15s ease;
 }
 
-body.dark {
-  background: #0b0b0d;
-  color: #f2f2f4;
+@media (prefers-color-scheme: dark) {
+  body {
+    background: #0b0b0d;
+    color: #f2f2f4;
+  }
 }
 
 .page {
@@ -73,6 +75,15 @@ body.dark {
   margin: 0;
   opacity: 0.7;
   font-size: 0.95rem;
+}
+
+.theme-hint {
+  margin: 0;
+  padding: 0.75rem 1rem;
+  border: 1px dashed rgba(128, 128, 128, 0.4);
+  border-radius: 10px;
+  font-size: 0.85rem;
+  opacity: 0.75;
 }
 
 /* ---------- Demo cards ---------- */
@@ -136,13 +147,15 @@ button {
   background: #2a2a30;
 }
 
-body.dark .primary-button {
-  background: #f2f2f4;
-  color: #16161a;
-}
+@media (prefers-color-scheme: dark) {
+  .primary-button {
+    background: #f2f2f4;
+    color: #16161a;
+  }
 
-body.dark .primary-button:hover {
-  background: #dcdce0;
+  .primary-button:hover {
+    background: #dcdce0;
+  }
 }
 
 .ghost-button {
@@ -169,7 +182,7 @@ body.dark .primary-button:hover {
   color: inherit;
   font-size: 0.88rem;
   opacity: 0.75;
-  text-align: left;
+  text-align: start;
 }
 
 .kbd-hint:hover,
@@ -189,7 +202,38 @@ kbd {
 
 /* The command palette itself is intentionally left unstyled here: Cmdora
    ships polished `cmdora-*` default styles (see "cmdora/style.css",
-   imported in main.tsx) so no palette-specific CSS is needed in this demo. */
+   imported in main.tsx) so no palette-specific CSS is needed in this demo.
+
+   CommandInput is a plain, unopinionated input with no icon of its own, so
+   this demo composes its own wrapper + icon around it to show how a
+   consumer builds custom UI on top of Cmdora's headless-ish primitives. */
+
+.example-input-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding-inline: 1rem;
+  border-bottom: 1px solid rgba(128, 128, 128, 0.2);
+}
+
+@media (prefers-color-scheme: dark) {
+  .example-input-wrapper {
+    border-bottom-color: rgba(255, 255, 255, 0.1);
+  }
+}
+
+.example-search-icon {
+  flex-shrink: 0;
+  opacity: 0.5;
+}
+
+.example-input {
+  flex: 1;
+  min-width: 0;
+  width: auto;
+  padding-inline: 0;
+  border-bottom: none;
+}
 
 /* ---------- Small screens ---------- */
 

@@ -23,6 +23,7 @@ test("Command can be created and executed", async () => {
 test("public API exposes only the intended runtime exports", () => {
   expect(Object.keys(CmdoraPublicApi).sort()).toEqual([
     "CmdoraProvider",
+    "CommandEmpty",
     "CommandInput",
     "CommandList",
     "CommandPalette",

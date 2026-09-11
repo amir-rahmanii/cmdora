@@ -38,7 +38,8 @@
   color: inherit;
   font: inherit;
   font-size: 1rem;
-  padding: 0.9rem 1rem;
+  padding-block: 0.9rem;
+  padding-inline: 1rem;
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 }
 
@@ -54,6 +55,14 @@
   gap: 0.15rem;
 }
 
+.cmdora-empty {
+  margin: 0;
+  padding: 2rem 1rem;
+  text-align: center;
+  font-size: 0.9rem;
+  color: rgba(0, 0, 0, 0.45);
+}
+
 .cmdora-item {
   display: block;
   width: 100%;
@@ -63,7 +72,7 @@
   cursor: pointer;
   font: inherit;
   font-size: 0.95rem;
-  text-align: left;
+  text-align: start;
   background: none;
   color: inherit;
 }
@@ -92,5 +101,9 @@
   .cmdora-item:hover,
   .cmdora-item:focus-visible {
     background: rgba(255, 255, 255, 0.1);
+  }
+
+  .cmdora-empty {
+    color: rgba(255, 255, 255, 0.45);
   }
 }
