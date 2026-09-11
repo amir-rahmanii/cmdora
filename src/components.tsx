@@ -12,14 +12,11 @@ import { createPortal } from "react-dom";
 import type { Command } from "./index.ts";
 import { useCommandPalette, useCommandState, type UseCommandPaletteResult } from "./provider.tsx";
 import { filterCommands } from "./search.ts";
+import "./styles.css";
 
 function cn(...classNames: Array<string | undefined | false | null>): string {
   return classNames.filter(Boolean).join(" ");
 }
-
-const BACKDROP_STRUCTURAL_CLASS_NAME =
-  "cmdora-backdrop fixed inset-0 z-50 flex items-center justify-center";
-const BACKDROP_DEFAULT_VISUAL_CLASS_NAME = "bg-black/40 backdrop-blur-md";
 
 interface CommandPaletteContextValue extends UseCommandPaletteResult {
   commands: Command[];
@@ -40,7 +37,12 @@ export interface CommandPaletteProps extends ComponentPropsWithoutRef<"div"> {
   backdropClassName?: string;
 }
 
-export function CommandPalette({ commands, backdropClassName, ...rest }: CommandPaletteProps) {
+export function CommandPalette({
+  commands,
+  backdropClassName,
+  className,
+  ...rest
+}: CommandPaletteProps) {
   const palette = useCommandPalette(commands);
   const state = useCommandState();
   const query = useSyncExternalStore(
@@ -93,19 +95,14 @@ export function CommandPalette({ commands, backdropClassName, ...rest }: Command
   }
 
   return createPortal(
-    <div
-      className={cn(
-        BACKDROP_STRUCTURAL_CLASS_NAME,
-        BACKDROP_DEFAULT_VISUAL_CLASS_NAME,
-        backdropClassName,
-      )}
-    >
+    <div className={cn("cmdora-backdrop", backdropClassName)}>
       <CommandPaletteContext.Provider value={{ ...palette, commands: filteredCommands }}>
         <div
           role="dialog"
           aria-modal="true"
           aria-label="Command palette"
           {...rest}
+          className={cn("cmdora-dialog", className)}
           ref={dialogRef}
         />
       </CommandPaletteContext.Provider>
@@ -116,7 +113,7 @@ export function CommandPalette({ commands, backdropClassName, ...rest }: Command
 
 export interface CommandInputProps extends Omit<ComponentPropsWithoutRef<"input">, "value"> {}
 
-export function CommandInput({ onChange, type = "text", ...rest }: CommandInputProps) {
+export function CommandInput({ onChange, type = "text", className, ...rest }: CommandInputProps) {
   const state = useCommandState();
   const query = useSyncExternalStore(
     (listener) => state.subscribe(listener),
@@ -128,6 +125,7 @@ export function CommandInput({ onChange, type = "text", ...rest }: CommandInputP
       {...rest}
       type={type}
       value={query}
+      className={cn("cmdora-input", className)}
       onChange={(event) => {
         state.setQuery(event.target.value);
         onChange?.(event);
@@ -138,11 +136,11 @@ export function CommandInput({ onChange, type = "text", ...rest }: CommandInputP
 
 export interface CommandListProps extends Omit<ComponentPropsWithoutRef<"div">, "children"> {}
 
-export function CommandList({ role = "listbox", ...rest }: CommandListProps) {
+export function CommandList({ role = "listbox", className, ...rest }: CommandListProps) {
   const { commands, close } = useCommandPaletteContext("CommandList");
 
   return (
-    <div role={role} {...rest}>
+    <div role={role} {...rest} className={cn("cmdora-list", className)}>
       {commands.map((command) => (
         <CommandListItem key={command.id} command={command} close={close} />
       ))}
@@ -165,6 +163,7 @@ function CommandListItem({ command, close }: CommandListItemProps) {
     <div
       role="option"
       tabIndex={0}
+      className="cmdora-item"
       onClick={select}
       onKeyDown={(event: ReactKeyboardEvent<HTMLDivElement>) => {
         if (event.key === "Enter" || event.key === " ") {

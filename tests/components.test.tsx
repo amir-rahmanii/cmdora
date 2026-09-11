@@ -109,7 +109,7 @@ test("a custom aria-label overrides the default accessible name", () => {
   expect(palette?.getAttribute("aria-label")).toBe("Commands");
 });
 
-test("renders a fixed, full-viewport backdrop behind the dialog with sensible default visuals", () => {
+test("renders a backdrop behind the dialog with the default cmdora-backdrop class", () => {
   const commands = [makeCommand("a")];
 
   render(
@@ -123,24 +123,16 @@ test("renders a fixed, full-viewport backdrop behind the dialog with sensible de
   const palette = document.body.querySelector('[data-testid="palette"]') as HTMLElement;
   const backdrop = palette.parentElement as HTMLElement;
 
-  expect(backdrop.className).toContain("fixed");
-  expect(backdrop.className).toContain("inset-0");
-  expect(backdrop.className).toContain("z-50");
-  expect(backdrop.className).toContain("bg-black/40");
-  expect(backdrop.className).toContain("backdrop-blur-md");
+  expect(backdrop.className).toContain("cmdora-backdrop");
   expect(backdrop.contains(palette)).toBe(true);
 });
 
-test("backdropClassName is accepted and merged with the structural defaults", () => {
+test("backdropClassName is accepted and merged with the default backdrop class", () => {
   const commands = [makeCommand("a")];
 
   render(
     <CmdoraProvider>
-      <CommandPalette
-        commands={commands}
-        data-testid="palette"
-        backdropClassName="bg-blue-950/30 backdrop-blur-sm"
-      />
+      <CommandPalette commands={commands} data-testid="palette" backdropClassName="my-backdrop" />
     </CmdoraProvider>,
   );
 
@@ -149,33 +141,61 @@ test("backdropClassName is accepted and merged with the structural defaults", ()
   const palette = document.body.querySelector('[data-testid="palette"]') as HTMLElement;
   const backdrop = palette.parentElement as HTMLElement;
 
-  // Structural classes are always present, regardless of customization.
-  expect(backdrop.className).toContain("fixed");
-  expect(backdrop.className).toContain("inset-0");
-  expect(backdrop.className).toContain("z-50");
+  // The default class is always present, so the built-in styling still applies...
+  expect(backdrop.className).toContain("cmdora-backdrop");
 
-  // Custom visual classes are present alongside the defaults, so a
-  // consumer's own CSS/Tailwind setup can make them take effect.
-  expect(backdrop.className).toContain("bg-blue-950/30");
-  expect(backdrop.className).toContain("backdrop-blur-sm");
+  // ...alongside the consumer's own class, so it can add to or override it.
+  expect(backdrop.className).toContain("my-backdrop");
 });
 
-test("without backdropClassName, the default visual classes are still applied", () => {
+test("the dialog, input, and list carry their default cmdora-* classes", () => {
   const commands = [makeCommand("a")];
 
-  render(
+  const { getByTestId } = render(
     <CmdoraProvider>
-      <CommandPalette commands={commands} data-testid="palette" />
+      <CommandPalette commands={commands} data-testid="palette">
+        <CommandInput data-testid="input" />
+        <CommandList data-testid="list" />
+      </CommandPalette>
+    </CmdoraProvider>,
+  );
+
+  openPalette();
+
+  expect(document.body.querySelector('[data-testid="palette"]')?.className).toContain(
+    "cmdora-dialog",
+  );
+  expect(getByTestId("input").className).toContain("cmdora-input");
+  expect(getByTestId("list").className).toContain("cmdora-list");
+});
+
+test("className props are merged with defaults, not replaced", () => {
+  const commands = [namedCommand("a", "Say hello")];
+
+  const { getByTestId, getByText } = render(
+    <CmdoraProvider>
+      <CommandPalette commands={commands} data-testid="palette" className="my-palette">
+        <CommandInput data-testid="input" className="my-input" />
+        <CommandList data-testid="list" className="my-list" />
+      </CommandPalette>
     </CmdoraProvider>,
   );
 
   openPalette();
 
   const palette = document.body.querySelector('[data-testid="palette"]') as HTMLElement;
-  const backdrop = palette.parentElement as HTMLElement;
+  expect(palette.className).toContain("cmdora-dialog");
+  expect(palette.className).toContain("my-palette");
 
-  expect(backdrop.className).toContain("bg-black/40");
-  expect(backdrop.className).toContain("backdrop-blur-md");
+  const input = getByTestId("input");
+  expect(input.className).toContain("cmdora-input");
+  expect(input.className).toContain("my-input");
+
+  const list = getByTestId("list");
+  expect(list.className).toContain("cmdora-list");
+  expect(list.className).toContain("my-list");
+
+  expect(getByText("Say hello").className).toContain("cmdora-item");
 });
 
 test("CommandList renders a listbox by default", () => {

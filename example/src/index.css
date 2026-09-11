@@ -187,123 +187,9 @@ kbd {
   background: rgba(128, 128, 128, 0.08);
 }
 
-/* ---------- Backdrop ----------
-   `.cmdora-backdrop` is a stable class Cmdora always applies to the
-   backdrop element. Cmdora's own default classes are Tailwind utility
-   names, which only take effect if the consumer's build uses Tailwind.
-   This demo doesn't, so it supplies the real positioning/visual CSS
-   itself via that stable hook and `backdropClassName` below. */
-.cmdora-backdrop {
-  position: fixed;
-  inset: 0;
-  z-index: 50;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 1.25rem;
-}
-
-.palette-backdrop {
-  background: rgba(10, 10, 12, 0.55);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-}
-
-/* ---------- Command palette ---------- */
-
-.palette {
-  width: min(32rem, 100%);
-  max-height: min(28rem, 80vh);
-  border: 1px solid rgba(128, 128, 128, 0.25);
-  border-radius: 16px;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  background: #ffffff;
-  color: #16161a;
-  box-shadow:
-    0 24px 60px rgba(0, 0, 0, 0.3),
-    0 2px 6px rgba(0, 0, 0, 0.12);
-}
-
-body.dark .palette {
-  background: #18181c;
-  color: #f2f2f4;
-  border-color: rgba(255, 255, 255, 0.1);
-}
-
-.palette-search {
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-  padding: 0.85rem 1rem;
-  border-bottom: 1px solid rgba(128, 128, 128, 0.2);
-  flex-shrink: 0;
-}
-
-.palette-search-icon {
-  flex-shrink: 0;
-  opacity: 0.55;
-}
-
-.palette-input {
-  flex: 1;
-  min-width: 0;
-  border: none;
-  outline: none;
-  background: transparent;
-  color: inherit;
-  font-size: 1rem;
-  padding: 0.15rem 0;
-}
-
-.palette-input::placeholder {
-  opacity: 0.5;
-}
-
-.palette-kbd {
-  flex-shrink: 0;
-}
-
-.palette-body {
-  padding: 0.6rem;
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-  gap: 0.35rem;
-}
-
-.palette-section-label {
-  font-size: 0.72rem;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  opacity: 0.55;
-  padding: 0.3rem 0.5rem 0.1rem;
-}
-
-.palette-list {
-  display: flex;
-  flex-direction: column;
-  gap: 0.15rem;
-}
-
-.palette-list [role="option"] {
-  padding: 0.65rem 0.75rem;
-  border-radius: 10px;
-  cursor: pointer;
-  font-size: 0.95rem;
-}
-
-.palette-list [role="option"]:hover,
-.palette-list [role="option"]:focus-visible {
-  background: rgba(99, 102, 241, 0.12);
-  outline: none;
-}
-
-body.dark .palette-list [role="option"]:hover,
-body.dark .palette-list [role="option"]:focus-visible {
-  background: rgba(129, 140, 248, 0.18);
-}
+/* The command palette itself is intentionally left unstyled here: Cmdora
+   ships polished `cmdora-*` default styles (see "cmdora/style.css",
+   imported in main.tsx) so no palette-specific CSS is needed in this demo. */
 
 /* ---------- Small screens ---------- */
 
@@ -314,9 +200,5 @@ body.dark .palette-list [role="option"]:focus-visible {
 
   .brand-name {
     font-size: 1.25rem;
-  }
-
-  .palette {
-    max-height: min(24rem, 75vh);
   }
 }

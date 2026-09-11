@@ -1,26 +1,6 @@
 import { useEffect, useState } from "react";
 import { CommandInput, CommandList, CommandPalette, useCommandPalette, type Command } from "cmdora";
 
-function SearchIcon() {
-  return (
-    <svg
-      className="palette-search-icon"
-      width="16"
-      height="16"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <circle cx="11" cy="11" r="7" />
-      <line x1="21" y1="21" x2="16.65" y2="16.65" />
-    </svg>
-  );
-}
-
 export function App() {
   const [message, setMessage] = useState("No command run yet.");
   const [count, setCount] = useState(0);
@@ -56,9 +36,11 @@ export function App() {
         <div className="brand">
           <span className="brand-mark">⌘</span>
           <span className="brand-name">Cmdora</span>
-          <span className="badge">Headless</span>
+          <span className="badge">Styled by default</span>
         </div>
-        <p className="tagline">A lightweight, headless command palette for React.</p>
+        <p className="tagline">
+          A lightweight command palette for React — styled by default, customizable when needed.
+        </p>
       </header>
 
       <section className="cards">
@@ -91,16 +73,14 @@ export function App() {
         Press <kbd>Ctrl</kbd> <kbd>K</kbd> or <kbd>⌘</kbd> <kbd>K</kbd> to open the command palette
       </button>
 
-      <CommandPalette commands={commands} className="palette" backdropClassName="palette-backdrop">
-        <div className="palette-search">
-          <SearchIcon />
-          <CommandInput className="palette-input" placeholder="Search commands..." autoFocus />
-          <kbd className="palette-kbd">⌘K</kbd>
-        </div>
-        <div className="palette-body">
-          <span className="palette-section-label">Commands</span>
-          <CommandList className="palette-list" />
-        </div>
+      {/*
+        No className/backdropClassName here: CommandPalette ships a polished
+        default appearance out of the box. Both props stay available for
+        consumers who want to customize it (see components.test.tsx).
+      */}
+      <CommandPalette commands={commands}>
+        <CommandInput placeholder="Search commands..." autoFocus />
+        <CommandList />
       </CommandPalette>
     </main>
   );
