@@ -5,3 +5,5 @@ export interface Command {
 }
 
 export { CommandRegistry } from "./registry.ts";
+export { CmdoraProvider, useCmdora } from "./provider.tsx";
+export type { CmdoraProviderProps } from "./provider.tsx";

@@ -4,6 +4,9 @@ export default defineConfig({
   staged: {
     "*": "vp check --fix",
   },
+  test: {
+    environment: "jsdom",
+  },
   pack: {
     dts: {
       tsgo: true,
