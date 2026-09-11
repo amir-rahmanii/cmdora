@@ -6,6 +6,7 @@ import {
   useRef,
   useSyncExternalStore,
   type ComponentPropsWithoutRef,
+  type CSSProperties,
   type KeyboardEvent as ReactKeyboardEvent,
 } from "react";
 import { createPortal } from "react-dom";
@@ -83,12 +84,32 @@ export function CommandPalette({ commands, ...rest }: CommandPaletteProps) {
   }
 
   return createPortal(
-    <CommandPaletteContext.Provider value={{ ...palette, commands: filteredCommands }}>
-      <div role="dialog" aria-modal="true" aria-label="Command palette" {...rest} ref={dialogRef} />
-    </CommandPaletteContext.Provider>,
+    <div className="cmdora-backdrop" style={backdropStyle}>
+      <CommandPaletteContext.Provider value={{ ...palette, commands: filteredCommands }}>
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-label="Command palette"
+          {...rest}
+          ref={dialogRef}
+        />
+      </CommandPaletteContext.Provider>
+    </div>,
     document.body,
   );
 }
+
+const backdropStyle: CSSProperties = {
+  position: "fixed",
+  inset: 0,
+  zIndex: 50,
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  backgroundColor: "rgba(0, 0, 0, 0.4)",
+  backdropFilter: "blur(8px)",
+  WebkitBackdropFilter: "blur(8px)",
+};
 
 export interface CommandInputProps extends Omit<ComponentPropsWithoutRef<"input">, "value"> {}
 

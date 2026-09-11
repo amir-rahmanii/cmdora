@@ -109,6 +109,28 @@ test("a custom aria-label overrides the default accessible name", () => {
   expect(palette?.getAttribute("aria-label")).toBe("Commands");
 });
 
+test("renders a fixed, full-viewport, blurred backdrop behind the dialog", () => {
+  const commands = [makeCommand("a")];
+
+  render(
+    <CmdoraProvider>
+      <CommandPalette commands={commands} data-testid="palette" />
+    </CmdoraProvider>,
+  );
+
+  openPalette();
+
+  const palette = document.body.querySelector('[data-testid="palette"]') as HTMLElement;
+  const backdrop = palette.parentElement as HTMLElement;
+
+  expect(backdrop.className).toContain("cmdora-backdrop");
+  expect(backdrop.style.position).toBe("fixed");
+  expect(backdrop.style.inset).toBe("0px");
+  expect(backdrop.style.backdropFilter).toContain("blur(8px)");
+  expect(backdrop.style.backgroundColor).toBe("rgba(0, 0, 0, 0.4)");
+  expect(backdrop.contains(palette)).toBe(true);
+});
+
 test("CommandList renders a listbox by default", () => {
   const commands = [makeCommand("a")];
 
