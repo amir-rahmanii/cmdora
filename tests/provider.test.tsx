@@ -1,7 +1,8 @@
 import { afterEach, expect, test } from "vite-plus/test";
 import { cleanup, render, renderHook } from "@testing-library/react";
-import { CmdoraProvider, useCmdora } from "../src/provider.tsx";
+import { CmdoraProvider, useCmdora, useCommandState } from "../src/provider.tsx";
 import { CommandRegistry } from "../src/registry.ts";
+import { CommandStateStore } from "../src/state.ts";
 
 afterEach(() => {
   cleanup();
@@ -37,6 +38,40 @@ test("useCmdora throws when used outside CmdoraProvider", () => {
 
   expect(result.current).toBeInstanceOf(Error);
   expect((result.current as Error).message).toBe("useCmdora must be used within a CmdoraProvider");
+});
+
+test("useCommandState returns a CommandStateStore inside CmdoraProvider", () => {
+  const { result } = renderHook(() => useCommandState(), {
+    wrapper: CmdoraProvider,
+  });
+
+  expect(result.current).toBeInstanceOf(CommandStateStore);
+});
+
+test("useCommandState returns the same store instance across re-renders", () => {
+  const { result, rerender } = renderHook(() => useCommandState(), {
+    wrapper: CmdoraProvider,
+  });
+
+  const first = result.current;
+  rerender();
+
+  expect(result.current).toBe(first);
+});
+
+test("useCommandState throws when used outside CmdoraProvider", () => {
+  const { result } = renderHook(() => {
+    try {
+      return useCommandState();
+    } catch (error) {
+      return error;
+    }
+  });
+
+  expect(result.current).toBeInstanceOf(Error);
+  expect((result.current as Error).message).toBe(
+    "useCommandState must be used within a CmdoraProvider",
+  );
 });
 
 test("CmdoraProvider renders its children", () => {
