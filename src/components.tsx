@@ -6,13 +6,20 @@ import {
   useRef,
   useSyncExternalStore,
   type ComponentPropsWithoutRef,
-  type CSSProperties,
   type KeyboardEvent as ReactKeyboardEvent,
 } from "react";
 import { createPortal } from "react-dom";
 import type { Command } from "./index.ts";
 import { useCommandPalette, useCommandState, type UseCommandPaletteResult } from "./provider.tsx";
 import { filterCommands } from "./search.ts";
+
+function cn(...classNames: Array<string | undefined | false | null>): string {
+  return classNames.filter(Boolean).join(" ");
+}
+
+const BACKDROP_STRUCTURAL_CLASS_NAME =
+  "cmdora-backdrop fixed inset-0 z-50 flex items-center justify-center";
+const BACKDROP_DEFAULT_VISUAL_CLASS_NAME = "bg-black/40 backdrop-blur-md";
 
 const CommandPaletteContext = createContext<UseCommandPaletteResult | null>(null);
 
@@ -26,9 +33,10 @@ function useCommandPaletteContext(hookName: string): UseCommandPaletteResult {
 
 export interface CommandPaletteProps extends ComponentPropsWithoutRef<"div"> {
   commands: Command[];
+  backdropClassName?: string;
 }
 
-export function CommandPalette({ commands, ...rest }: CommandPaletteProps) {
+export function CommandPalette({ commands, backdropClassName, ...rest }: CommandPaletteProps) {
   const palette = useCommandPalette(commands);
   const state = useCommandState();
   const query = useSyncExternalStore(
@@ -84,7 +92,13 @@ export function CommandPalette({ commands, ...rest }: CommandPaletteProps) {
   }
 
   return createPortal(
-    <div className="cmdora-backdrop" style={backdropStyle}>
+    <div
+      className={cn(
+        BACKDROP_STRUCTURAL_CLASS_NAME,
+        BACKDROP_DEFAULT_VISUAL_CLASS_NAME,
+        backdropClassName,
+      )}
+    >
       <CommandPaletteContext.Provider value={{ ...palette, commands: filteredCommands }}>
         <div
           role="dialog"
@@ -98,18 +112,6 @@ export function CommandPalette({ commands, ...rest }: CommandPaletteProps) {
     document.body,
   );
 }
-
-const backdropStyle: CSSProperties = {
-  position: "fixed",
-  inset: 0,
-  zIndex: 50,
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-  backgroundColor: "rgba(0, 0, 0, 0.4)",
-  backdropFilter: "blur(8px)",
-  WebkitBackdropFilter: "blur(8px)",
-};
 
 export interface CommandInputProps extends Omit<ComponentPropsWithoutRef<"input">, "value"> {}
 

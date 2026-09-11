@@ -109,7 +109,7 @@ test("a custom aria-label overrides the default accessible name", () => {
   expect(palette?.getAttribute("aria-label")).toBe("Commands");
 });
 
-test("renders a fixed, full-viewport, blurred backdrop behind the dialog", () => {
+test("renders a fixed, full-viewport backdrop behind the dialog with sensible default visuals", () => {
   const commands = [makeCommand("a")];
 
   render(
@@ -123,12 +123,59 @@ test("renders a fixed, full-viewport, blurred backdrop behind the dialog", () =>
   const palette = document.body.querySelector('[data-testid="palette"]') as HTMLElement;
   const backdrop = palette.parentElement as HTMLElement;
 
-  expect(backdrop.className).toContain("cmdora-backdrop");
-  expect(backdrop.style.position).toBe("fixed");
-  expect(backdrop.style.inset).toBe("0px");
-  expect(backdrop.style.backdropFilter).toContain("blur(8px)");
-  expect(backdrop.style.backgroundColor).toBe("rgba(0, 0, 0, 0.4)");
+  expect(backdrop.className).toContain("fixed");
+  expect(backdrop.className).toContain("inset-0");
+  expect(backdrop.className).toContain("z-50");
+  expect(backdrop.className).toContain("bg-black/40");
+  expect(backdrop.className).toContain("backdrop-blur-md");
   expect(backdrop.contains(palette)).toBe(true);
+});
+
+test("backdropClassName is accepted and merged with the structural defaults", () => {
+  const commands = [makeCommand("a")];
+
+  render(
+    <CmdoraProvider>
+      <CommandPalette
+        commands={commands}
+        data-testid="palette"
+        backdropClassName="bg-blue-950/30 backdrop-blur-sm"
+      />
+    </CmdoraProvider>,
+  );
+
+  openPalette();
+
+  const palette = document.body.querySelector('[data-testid="palette"]') as HTMLElement;
+  const backdrop = palette.parentElement as HTMLElement;
+
+  // Structural classes are always present, regardless of customization.
+  expect(backdrop.className).toContain("fixed");
+  expect(backdrop.className).toContain("inset-0");
+  expect(backdrop.className).toContain("z-50");
+
+  // Custom visual classes are present alongside the defaults, so a
+  // consumer's own CSS/Tailwind setup can make them take effect.
+  expect(backdrop.className).toContain("bg-blue-950/30");
+  expect(backdrop.className).toContain("backdrop-blur-sm");
+});
+
+test("without backdropClassName, the default visual classes are still applied", () => {
+  const commands = [makeCommand("a")];
+
+  render(
+    <CmdoraProvider>
+      <CommandPalette commands={commands} data-testid="palette" />
+    </CmdoraProvider>,
+  );
+
+  openPalette();
+
+  const palette = document.body.querySelector('[data-testid="palette"]') as HTMLElement;
+  const backdrop = palette.parentElement as HTMLElement;
+
+  expect(backdrop.className).toContain("bg-black/40");
+  expect(backdrop.className).toContain("backdrop-blur-md");
 });
 
 test("CommandList renders a listbox by default", () => {
