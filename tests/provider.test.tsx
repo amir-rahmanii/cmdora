@@ -1,6 +1,6 @@
 import { afterEach, expect, test } from "vite-plus/test";
-import { cleanup, render, renderHook } from "@testing-library/react";
-import { CmdoraProvider, useCmdora, useCommandState } from "../src/provider.tsx";
+import { act, cleanup, render, renderHook } from "@testing-library/react";
+import { CmdoraProvider, useCmdora, useCommandPalette, useCommandState } from "../src/provider.tsx";
 import { CommandRegistry } from "../src/registry.ts";
 import { CommandStateStore } from "../src/state.ts";
 
@@ -72,6 +72,69 @@ test("useCommandState throws when used outside CmdoraProvider", () => {
   expect((result.current as Error).message).toBe(
     "useCommandState must be used within a CmdoraProvider",
   );
+});
+
+test("useCommandPalette starts closed", () => {
+  const { result } = renderHook(() => useCommandPalette(), {
+    wrapper: CmdoraProvider,
+  });
+
+  expect(result.current.isOpen).toBe(false);
+});
+
+test("useCommandPalette open sets isOpen to true", () => {
+  const { result } = renderHook(() => useCommandPalette(), {
+    wrapper: CmdoraProvider,
+  });
+
+  act(() => {
+    result.current.open();
+  });
+
+  expect(result.current.isOpen).toBe(true);
+});
+
+test("useCommandPalette close sets isOpen to false", () => {
+  const { result } = renderHook(() => useCommandPalette(), {
+    wrapper: CmdoraProvider,
+  });
+
+  act(() => {
+    result.current.open();
+  });
+  act(() => {
+    result.current.close();
+  });
+
+  expect(result.current.isOpen).toBe(false);
+});
+
+test("useCommandPalette toggle switches isOpen", () => {
+  const { result } = renderHook(() => useCommandPalette(), {
+    wrapper: CmdoraProvider,
+  });
+
+  act(() => {
+    result.current.toggle();
+  });
+  expect(result.current.isOpen).toBe(true);
+
+  act(() => {
+    result.current.toggle();
+  });
+  expect(result.current.isOpen).toBe(false);
+});
+
+test("useCommandPalette throws when used outside CmdoraProvider", () => {
+  const { result } = renderHook(() => {
+    try {
+      return useCommandPalette();
+    } catch (error) {
+      return error;
+    }
+  });
+
+  expect(result.current).toBeInstanceOf(Error);
 });
 
 test("CmdoraProvider renders its children", () => {

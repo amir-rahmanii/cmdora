@@ -37,6 +37,18 @@ export class CommandStateStore {
     this.#notify();
   }
 
+  open(): void {
+    this.setOpen(true);
+  }
+
+  close(): void {
+    this.setOpen(false);
+  }
+
+  toggle(): void {
+    this.setOpen(!this.#state.isOpen);
+  }
+
   reset(): void {
     this.#state = createInitialState();
     this.#notify();

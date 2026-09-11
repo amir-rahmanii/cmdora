@@ -1,4 +1,4 @@
-import { createContext, useContext, useRef, type ReactNode } from "react";
+import { createContext, useContext, useRef, useSyncExternalStore, type ReactNode } from "react";
 import { CommandRegistry } from "./registry.ts";
 import { CommandStateStore } from "./state.ts";
 
@@ -43,4 +43,26 @@ export function useCommandState(): CommandStateStore {
     throw new Error("useCommandState must be used within a CmdoraProvider");
   }
   return state;
+}
+
+export interface CommandPalette {
+  isOpen: boolean;
+  open: () => void;
+  close: () => void;
+  toggle: () => void;
+}
+
+export function useCommandPalette(): CommandPalette {
+  const state = useCommandState();
+  const isOpen = useSyncExternalStore(
+    (listener) => state.subscribe(listener),
+    () => state.getState().isOpen,
+  );
+
+  return {
+    isOpen,
+    open: () => state.open(),
+    close: () => state.close(),
+    toggle: () => state.toggle(),
+  };
 }

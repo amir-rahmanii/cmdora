@@ -37,6 +37,33 @@ test("setOpen updates isOpen", () => {
   expect(store.getState().isOpen).toBe(true);
 });
 
+test("open sets isOpen to true", () => {
+  const store = new CommandStateStore();
+
+  store.open();
+
+  expect(store.getState().isOpen).toBe(true);
+});
+
+test("close sets isOpen to false", () => {
+  const store = new CommandStateStore();
+
+  store.open();
+  store.close();
+
+  expect(store.getState().isOpen).toBe(false);
+});
+
+test("toggle switches isOpen", () => {
+  const store = new CommandStateStore();
+
+  store.toggle();
+  expect(store.getState().isOpen).toBe(true);
+
+  store.toggle();
+  expect(store.getState().isOpen).toBe(false);
+});
+
 test("reset restores initial state", () => {
   const store = new CommandStateStore();
 
