@@ -72,7 +72,6 @@ export function useCommandState(): CommandStateStore {
 }
 
 export interface UseCommandPaletteResult {
-  commands: Command[];
   isOpen: boolean;
   open: () => void;
   close: () => void;
@@ -84,12 +83,19 @@ export function useCommandPalette(commands: Command[] = []): UseCommandPaletteRe
   const state = useCommandState();
 
   useEffect(() => {
+    // Registering is idempotent: if another useCommandPalette() call (e.g. in
+    // a parent or a nested CommandPalette) already registered a given id,
+    // this instance skips it and won't be the one to unregister it either.
+    const registeredIds: string[] = [];
     for (const command of commands) {
-      registry.register(command);
+      if (registry.get(command.id) === undefined) {
+        registry.register(command);
+        registeredIds.push(command.id);
+      }
     }
     return () => {
-      for (const command of commands) {
-        registry.unregister(command.id);
+      for (const id of registeredIds) {
+        registry.unregister(id);
       }
     };
   }, [registry, commands]);
@@ -100,7 +106,6 @@ export function useCommandPalette(commands: Command[] = []): UseCommandPaletteRe
   );
 
   return {
-    commands,
     isOpen,
     open: () => state.open(),
     close: () => state.close(),

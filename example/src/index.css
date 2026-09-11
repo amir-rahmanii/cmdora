@@ -82,10 +82,44 @@ body.dark {
   overflow-wrap: anywhere;
 }
 
-.open-hint {
-  margin: 0;
+.open-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.open-button {
+  font-weight: 600;
+}
+
+.close-button {
+  opacity: 0.75;
+}
+
+.hint-button {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  flex-wrap: wrap;
+  border: none;
+  padding: 0;
+  background: none;
   font-size: 0.9rem;
   opacity: 0.8;
+  text-align: left;
+}
+
+.hint-button:hover,
+.hint-button:focus-visible {
+  opacity: 1;
+}
+
+.status-line {
+  margin: 0;
+  font-size: 0.85rem;
+  opacity: 0.65;
 }
 
 kbd {

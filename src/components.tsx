@@ -21,9 +21,13 @@ const BACKDROP_STRUCTURAL_CLASS_NAME =
   "cmdora-backdrop fixed inset-0 z-50 flex items-center justify-center";
 const BACKDROP_DEFAULT_VISUAL_CLASS_NAME = "bg-black/40 backdrop-blur-md";
 
-const CommandPaletteContext = createContext<UseCommandPaletteResult | null>(null);
+interface CommandPaletteContextValue extends UseCommandPaletteResult {
+  commands: Command[];
+}
 
-function useCommandPaletteContext(hookName: string): UseCommandPaletteResult {
+const CommandPaletteContext = createContext<CommandPaletteContextValue | null>(null);
+
+function useCommandPaletteContext(hookName: string): CommandPaletteContextValue {
   const context = useContext(CommandPaletteContext);
   if (context === null) {
     throw new Error(`${hookName} must be used within a CommandPalette`);
@@ -44,10 +48,7 @@ export function CommandPalette({ commands, backdropClassName, ...rest }: Command
     () => state.getState().query,
   );
 
-  const filteredCommands = useMemo(
-    () => filterCommands(palette.commands, query),
-    [palette.commands, query],
-  );
+  const filteredCommands = useMemo(() => filterCommands(commands, query), [commands, query]);
 
   const dialogRef = useRef<HTMLDivElement | null>(null);
   const closeRef = useRef(palette.close);
