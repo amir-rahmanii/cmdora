@@ -20,13 +20,13 @@ test("Command can be created and executed", async () => {
   expect(executed).toBe(true);
 });
 
-test("public API only exposes CmdoraProvider and useCommandPalette", () => {
-  expect(Object.keys(CmdoraPublicApi).sort()).toEqual(["CmdoraProvider", "useCommandPalette"]);
-});
-
-test("useCmdora, useCommandState, and the internal stores are not public exports", () => {
-  expect("useCmdora" in CmdoraPublicApi).toBe(false);
-  expect("useCommandState" in CmdoraPublicApi).toBe(false);
-  expect("CommandRegistry" in CmdoraPublicApi).toBe(false);
-  expect("CommandStateStore" in CmdoraPublicApi).toBe(false);
+test("public API exposes only the intended runtime exports", () => {
+  expect(Object.keys(CmdoraPublicApi).sort()).toEqual([
+    "CmdoraProvider",
+    "CommandInput",
+    "CommandItem",
+    "CommandList",
+    "CommandPalette",
+    "useCommandPalette",
+  ]);
 });

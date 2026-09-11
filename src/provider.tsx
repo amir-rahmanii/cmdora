@@ -71,7 +71,7 @@ export function useCommandState(): CommandStateStore {
   return state;
 }
 
-export interface CommandPalette {
+export interface UseCommandPaletteResult {
   commands: Command[];
   isOpen: boolean;
   open: () => void;
@@ -79,7 +79,7 @@ export interface CommandPalette {
   toggle: () => void;
 }
 
-export function useCommandPalette(commands: Command[] = []): CommandPalette {
+export function useCommandPalette(commands: Command[] = []): UseCommandPaletteResult {
   const registry = useCmdora();
   const state = useCommandState();
 
