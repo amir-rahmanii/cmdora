@@ -6,35 +6,16 @@ test("initial state", () => {
 
   expect(store.getState()).toEqual({
     query: "",
-    selectedIndex: 0,
     isOpen: false,
   });
 });
 
-test("setQuery updates query and resets selectedIndex", () => {
+test("setQuery updates query", () => {
   const store = new CommandStateStore();
 
-  store.setSelectedIndex(3);
   store.setQuery("foo");
 
   expect(store.getState().query).toBe("foo");
-  expect(store.getState().selectedIndex).toBe(0);
-});
-
-test("setSelectedIndex updates selectedIndex", () => {
-  const store = new CommandStateStore();
-
-  store.setSelectedIndex(2);
-
-  expect(store.getState().selectedIndex).toBe(2);
-});
-
-test("setOpen updates isOpen", () => {
-  const store = new CommandStateStore();
-
-  store.setOpen(true);
-
-  expect(store.getState().isOpen).toBe(true);
 });
 
 test("open sets isOpen to true", () => {
@@ -64,21 +45,6 @@ test("toggle switches isOpen", () => {
   expect(store.getState().isOpen).toBe(false);
 });
 
-test("reset restores initial state", () => {
-  const store = new CommandStateStore();
-
-  store.setQuery("foo");
-  store.setSelectedIndex(2);
-  store.setOpen(true);
-  store.reset();
-
-  expect(store.getState()).toEqual({
-    query: "",
-    selectedIndex: 0,
-    isOpen: false,
-  });
-});
-
 test("subscribe notifies listeners on change", () => {
   const store = new CommandStateStore();
   let callCount = 0;
@@ -88,7 +54,7 @@ test("subscribe notifies listeners on change", () => {
   });
 
   store.setQuery("foo");
-  store.setOpen(true);
+  store.open();
 
   expect(callCount).toBe(2);
 });

@@ -1,21 +1,12 @@
 export interface CommandState {
   query: string;
-  selectedIndex: number;
   isOpen: boolean;
 }
 
 type Listener = () => void;
 
-function createInitialState(): CommandState {
-  return {
-    query: "",
-    selectedIndex: 0,
-    isOpen: false,
-  };
-}
-
 export class CommandStateStore {
-  #state: CommandState = createInitialState();
+  #state: CommandState = { query: "", isOpen: false };
   #listeners = new Set<Listener>();
 
   getState(): CommandState {
@@ -23,34 +14,22 @@ export class CommandStateStore {
   }
 
   setQuery(query: string): void {
-    this.#state = { ...this.#state, query, selectedIndex: 0 };
-    this.#notify();
-  }
-
-  setSelectedIndex(index: number): void {
-    this.#state = { ...this.#state, selectedIndex: index };
-    this.#notify();
-  }
-
-  setOpen(isOpen: boolean): void {
-    this.#state = { ...this.#state, isOpen };
+    this.#state = { ...this.#state, query };
     this.#notify();
   }
 
   open(): void {
-    this.setOpen(true);
+    this.#state = { ...this.#state, isOpen: true };
+    this.#notify();
   }
 
   close(): void {
-    this.setOpen(false);
+    this.#state = { ...this.#state, isOpen: false };
+    this.#notify();
   }
 
   toggle(): void {
-    this.setOpen(!this.#state.isOpen);
-  }
-
-  reset(): void {
-    this.#state = createInitialState();
+    this.#state = { ...this.#state, isOpen: !this.#state.isOpen };
     this.#notify();
   }
 

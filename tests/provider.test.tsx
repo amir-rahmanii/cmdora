@@ -1,45 +1,10 @@
 import { afterEach, expect, test } from "vite-plus/test";
 import { act, cleanup, fireEvent, render, renderHook } from "@testing-library/react";
-import { CmdoraProvider, useCmdora, useCommandPalette, useCommandState } from "../src/provider.tsx";
-import { CommandRegistry } from "../src/registry.ts";
+import { CmdoraProvider, useCommandPalette, useCommandState } from "../src/provider.tsx";
 import { CommandStateStore } from "../src/state.ts";
-import type { Command } from "../src/index.ts";
-import type { ReactNode } from "react";
 
 afterEach(() => {
   cleanup();
-});
-
-test("useCmdora returns a CommandRegistry inside CmdoraProvider", () => {
-  const { result } = renderHook(() => useCmdora(), {
-    wrapper: CmdoraProvider,
-  });
-
-  expect(result.current).toBeInstanceOf(CommandRegistry);
-});
-
-test("useCmdora returns the same registry instance across re-renders", () => {
-  const { result, rerender } = renderHook(() => useCmdora(), {
-    wrapper: CmdoraProvider,
-  });
-
-  const first = result.current;
-  rerender();
-
-  expect(result.current).toBe(first);
-});
-
-test("useCmdora throws when used outside CmdoraProvider", () => {
-  const { result } = renderHook(() => {
-    try {
-      return useCmdora();
-    } catch (error) {
-      return error;
-    }
-  });
-
-  expect(result.current).toBeInstanceOf(Error);
-  expect((result.current as Error).message).toBe("useCmdora must be used within a CmdoraProvider");
 });
 
 test("useCommandState returns a CommandStateStore inside CmdoraProvider", () => {
@@ -227,123 +192,6 @@ test("Ctrl+K listener is removed after unmount", () => {
 
   expect(event.defaultPrevented).toBe(false);
   expect(result.current.isOpen).toBe(false);
-});
-
-test("useCommandPalette registers commands on the underlying registry", () => {
-  const commands: Command[] = [{ id: "a", name: "A", execute: () => {} }];
-
-  function useTestHooks(cmds: Command[]) {
-    const palette = useCommandPalette(cmds);
-    const registry = useCmdora();
-    return { palette, registry };
-  }
-
-  const { result } = renderHook(() => useTestHooks(commands), {
-    wrapper: CmdoraProvider,
-  });
-
-  expect(result.current.registry.get("a")).toBe(commands[0]);
-});
-
-test("useCommandPalette unregisters commands no longer passed in", () => {
-  const commandA: Command = { id: "a", name: "A", execute: () => {} };
-  const commandB: Command = { id: "b", name: "B", execute: () => {} };
-
-  function useTestHooks(cmds: Command[]) {
-    const palette = useCommandPalette(cmds);
-    const registry = useCmdora();
-    return { palette, registry };
-  }
-
-  const { result, rerender } = renderHook(({ cmds }) => useTestHooks(cmds), {
-    wrapper: CmdoraProvider,
-    initialProps: { cmds: [commandA, commandB] },
-  });
-
-  expect(result.current.registry.get("b")).toBe(commandB);
-
-  rerender({ cmds: [commandA] });
-
-  expect(result.current.registry.get("b")).toBeUndefined();
-  expect(result.current.registry.get("a")).toBe(commandA);
-});
-
-test("useCommandPalette unregisters commands on unmount", () => {
-  const commands: Command[] = [{ id: "a", name: "A", execute: () => {} }];
-
-  function useTestHooks(cmds: Command[]) {
-    const palette = useCommandPalette(cmds);
-    const registry = useCmdora();
-    return { palette, registry };
-  }
-
-  const { result, unmount } = renderHook(() => useTestHooks(commands), {
-    wrapper: CmdoraProvider,
-  });
-
-  expect(result.current.registry.get("a")).toBe(commands[0]);
-
-  unmount();
-
-  expect(result.current.registry.get("a")).toBeUndefined();
-});
-
-test("multiple useCommandPalette() calls with overlapping commands do not throw", () => {
-  const commands: Command[] = [{ id: "a", name: "A", execute: () => {} }];
-
-  function Outer({ children }: { children: ReactNode }) {
-    useCommandPalette(commands);
-    return <>{children}</>;
-  }
-
-  function Inner() {
-    useCommandPalette(commands);
-    return null;
-  }
-
-  expect(() => {
-    render(
-      <CmdoraProvider>
-        <Outer>
-          <Inner />
-        </Outer>
-      </CmdoraProvider>,
-    );
-  }).not.toThrow();
-});
-
-test("unmounting the instance that owns a shared command leaves it registered for the other", () => {
-  const commands: Command[] = [{ id: "a", name: "A", execute: () => {} }];
-
-  function Owner() {
-    useCommandPalette(commands);
-    return null;
-  }
-
-  function Passenger({ registryRef }: { registryRef: { current: CommandRegistry | null } }) {
-    useCommandPalette(commands);
-    registryRef.current = useCmdora();
-    return null;
-  }
-
-  const registryRef: { current: CommandRegistry | null } = { current: null };
-
-  const { rerender } = render(
-    <CmdoraProvider>
-      <Owner />
-      <Passenger registryRef={registryRef} />
-    </CmdoraProvider>,
-  );
-
-  expect(registryRef.current?.get("a")).toBe(commands[0]);
-
-  rerender(
-    <CmdoraProvider>
-      <Passenger registryRef={registryRef} />
-    </CmdoraProvider>,
-  );
-
-  expect(registryRef.current?.get("a")).toBe(commands[0]);
 });
 
 test("CmdoraProvider renders its children", () => {

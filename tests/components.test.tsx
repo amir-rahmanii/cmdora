@@ -198,22 +198,6 @@ test("className props are merged with defaults, not replaced", () => {
   expect(getByText("Say hello").className).toContain("cmdora-item");
 });
 
-test("CommandList renders a listbox by default", () => {
-  const commands = [makeCommand("a")];
-
-  const { getByTestId } = render(
-    <CmdoraProvider>
-      <CommandPalette commands={commands}>
-        <CommandList data-testid="list" />
-      </CommandPalette>
-    </CmdoraProvider>,
-  );
-
-  openPalette();
-
-  expect(getByTestId("list").getAttribute("role")).toBe("listbox");
-});
-
 test("CommandList automatically renders all commands without any consumer mapping", () => {
   const commands = [
     namedCommand("a", "Say hello"),
@@ -234,7 +218,7 @@ test("CommandList automatically renders all commands without any consumer mappin
   expect(getByTestId("list").textContent).toBe("Say helloIncrement counterToggle dark mode");
 });
 
-test("CommandList renders each command with an option role", () => {
+test("CommandList renders each command as a real, natively focusable button", () => {
   const commands = [namedCommand("a", "Say hello")];
 
   const { getByText } = render(
@@ -248,8 +232,11 @@ test("CommandList renders each command with an option role", () => {
   openPalette();
 
   const item = getByText("Say hello");
-  expect(item.getAttribute("role")).toBe("option");
-  expect(item.getAttribute("tabindex")).toBe("0");
+  expect(item.tagName).toBe("BUTTON");
+});
+
+test("CommandList throws when used outside a CommandPalette", () => {
+  expect(() => render(<CommandList />)).toThrow("CommandList must be used within a CommandPalette");
 });
 
 test("activating a rendered command executes it and closes the palette", () => {
@@ -274,29 +261,6 @@ test("activating a rendered command executes it and closes the palette", () => {
 
   expect(executed).toBe(true);
   expect(document.body.querySelector('[data-testid="palette"]')).toBeNull();
-});
-
-test("activating a rendered command with Enter executes it", () => {
-  let executed = false;
-  const command = makeCommand("a", () => {
-    executed = true;
-  });
-
-  const { getByText } = render(
-    <CmdoraProvider>
-      <CommandPalette commands={[command]}>
-        <CommandList />
-      </CommandPalette>
-    </CmdoraProvider>,
-  );
-
-  openPalette();
-
-  act(() => {
-    fireEvent.keyDown(getByText("a"), { key: "Enter" });
-  });
-
-  expect(executed).toBe(true);
 });
 
 test("CommandInput reflects and updates the shared query state", () => {

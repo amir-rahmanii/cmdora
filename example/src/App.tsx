@@ -28,7 +28,7 @@ export function App() {
     },
   ];
 
-  const { isOpen, open, close, toggle } = useCommandPalette(commands);
+  const { isOpen, open, close, toggle } = useCommandPalette();
 
   return (
     <main className="page">

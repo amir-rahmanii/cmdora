@@ -2,15 +2,13 @@ import {
   createContext,
   useContext,
   useEffect,
-  useMemo,
   useRef,
   useSyncExternalStore,
   type ComponentPropsWithoutRef,
-  type KeyboardEvent as ReactKeyboardEvent,
 } from "react";
 import { createPortal } from "react-dom";
 import type { Command } from "./index.ts";
-import { useCommandPalette, useCommandState, type UseCommandPaletteResult } from "./provider.tsx";
+import { useCommandState } from "./provider.tsx";
 import { filterCommands } from "./search.ts";
 import "./styles.css";
 
@@ -18,16 +16,17 @@ function cn(...classNames: Array<string | undefined | false | null>): string {
   return classNames.filter(Boolean).join(" ");
 }
 
-interface CommandPaletteContextValue extends UseCommandPaletteResult {
+interface CommandPaletteContextValue {
   commands: Command[];
+  close: () => void;
 }
 
 const CommandPaletteContext = createContext<CommandPaletteContextValue | null>(null);
 
-function useCommandPaletteContext(hookName: string): CommandPaletteContextValue {
+function useCommandPaletteContext(): CommandPaletteContextValue {
   const context = useContext(CommandPaletteContext);
   if (context === null) {
-    throw new Error(`${hookName} must be used within a CommandPalette`);
+    throw new Error("CommandList must be used within a CommandPalette");
   }
   return context;
 }
@@ -43,21 +42,18 @@ export function CommandPalette({
   className,
   ...rest
 }: CommandPaletteProps) {
-  const palette = useCommandPalette(commands);
   const state = useCommandState();
-  const query = useSyncExternalStore(
+  const { isOpen, query } = useSyncExternalStore(
     (listener) => state.subscribe(listener),
-    () => state.getState().query,
+    () => state.getState(),
   );
 
-  const filteredCommands = useMemo(() => filterCommands(commands, query), [commands, query]);
+  const filteredCommands = filterCommands(commands, query);
 
   const dialogRef = useRef<HTMLDivElement | null>(null);
-  const closeRef = useRef(palette.close);
-  closeRef.current = palette.close;
 
   useEffect(() => {
-    if (!palette.isOpen) {
+    if (!isOpen) {
       return;
     }
 
@@ -69,13 +65,13 @@ export function CommandPalette({
 
     function handleKeyDown(event: KeyboardEvent): void {
       if (event.key === "Escape") {
-        closeRef.current();
+        state.close();
       }
     }
 
     function handlePointerDown(event: MouseEvent): void {
       if (dialogRef.current && !dialogRef.current.contains(event.target as Node)) {
-        closeRef.current();
+        state.close();
       }
     }
 
@@ -88,15 +84,17 @@ export function CommandPalette({
       document.body.style.overflow = previousOverflow;
       previouslyFocused?.focus();
     };
-  }, [palette.isOpen]);
+  }, [isOpen, state]);
 
-  if (!palette.isOpen) {
+  if (!isOpen) {
     return null;
   }
 
   return createPortal(
     <div className={cn("cmdora-backdrop", backdropClassName)}>
-      <CommandPaletteContext.Provider value={{ ...palette, commands: filteredCommands }}>
+      <CommandPaletteContext.Provider
+        value={{ commands: filteredCommands, close: () => state.close() }}
+      >
         <div
           role="dialog"
           aria-modal="true"
@@ -136,11 +134,11 @@ export function CommandInput({ onChange, type = "text", className, ...rest }: Co
 
 export interface CommandListProps extends Omit<ComponentPropsWithoutRef<"div">, "children"> {}
 
-export function CommandList({ role = "listbox", className, ...rest }: CommandListProps) {
-  const { commands, close } = useCommandPaletteContext("CommandList");
+export function CommandList({ className, ...rest }: CommandListProps) {
+  const { commands, close } = useCommandPaletteContext();
 
   return (
-    <div role={role} {...rest} className={cn("cmdora-list", className)}>
+    <div {...rest} className={cn("cmdora-list", className)}>
       {commands.map((command) => (
         <CommandListItem key={command.id} command={command} close={close} />
       ))}
@@ -160,19 +158,8 @@ function CommandListItem({ command, close }: CommandListItemProps) {
   }
 
   return (
-    <div
-      role="option"
-      tabIndex={0}
-      className="cmdora-item"
-      onClick={select}
-      onKeyDown={(event: ReactKeyboardEvent<HTMLDivElement>) => {
-        if (event.key === "Enter" || event.key === " ") {
-          event.preventDefault();
-          select();
-        }
-      }}
-    >
+    <button type="button" className="cmdora-item" onClick={select}>
       {command.name}
-    </div>
+    </button>
   );
 }
