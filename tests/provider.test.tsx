@@ -1,5 +1,5 @@
 import { afterEach, expect, test } from "vite-plus/test";
-import { act, cleanup, render, renderHook } from "@testing-library/react";
+import { act, cleanup, fireEvent, render, renderHook } from "@testing-library/react";
 import { CmdoraProvider, useCmdora, useCommandPalette, useCommandState } from "../src/provider.tsx";
 import { CommandRegistry } from "../src/registry.ts";
 import { CommandStateStore } from "../src/state.ts";
@@ -135,6 +135,96 @@ test("useCommandPalette throws when used outside CmdoraProvider", () => {
   });
 
   expect(result.current).toBeInstanceOf(Error);
+});
+
+test("Ctrl+K toggles the palette open", () => {
+  const { result } = renderHook(() => useCommandPalette(), {
+    wrapper: CmdoraProvider,
+  });
+
+  act(() => {
+    fireEvent.keyDown(document, { key: "k", ctrlKey: true });
+  });
+
+  expect(result.current.isOpen).toBe(true);
+});
+
+test("Cmd+K (metaKey) toggles the palette open", () => {
+  const { result } = renderHook(() => useCommandPalette(), {
+    wrapper: CmdoraProvider,
+  });
+
+  act(() => {
+    fireEvent.keyDown(document, { key: "k", metaKey: true });
+  });
+
+  expect(result.current.isOpen).toBe(true);
+});
+
+test("Ctrl+K twice toggles the palette closed again", () => {
+  const { result } = renderHook(() => useCommandPalette(), {
+    wrapper: CmdoraProvider,
+  });
+
+  act(() => {
+    fireEvent.keyDown(document, { key: "k", ctrlKey: true });
+  });
+  act(() => {
+    fireEvent.keyDown(document, { key: "k", ctrlKey: true });
+  });
+
+  expect(result.current.isOpen).toBe(false);
+});
+
+test("K without Ctrl/Cmd does not toggle the palette", () => {
+  const { result } = renderHook(() => useCommandPalette(), {
+    wrapper: CmdoraProvider,
+  });
+
+  act(() => {
+    fireEvent.keyDown(document, { key: "k" });
+  });
+
+  expect(result.current.isOpen).toBe(false);
+});
+
+test("Ctrl+K prevents the browser default action", () => {
+  renderHook(() => useCommandPalette(), {
+    wrapper: CmdoraProvider,
+  });
+
+  const event = new KeyboardEvent("keydown", {
+    key: "k",
+    ctrlKey: true,
+    cancelable: true,
+  });
+
+  act(() => {
+    document.dispatchEvent(event);
+  });
+
+  expect(event.defaultPrevented).toBe(true);
+});
+
+test("Ctrl+K listener is removed after unmount", () => {
+  const { result, unmount } = renderHook(() => useCommandPalette(), {
+    wrapper: CmdoraProvider,
+  });
+
+  unmount();
+
+  const event = new KeyboardEvent("keydown", {
+    key: "k",
+    ctrlKey: true,
+    cancelable: true,
+  });
+
+  act(() => {
+    document.dispatchEvent(event);
+  });
+
+  expect(event.defaultPrevented).toBe(false);
+  expect(result.current.isOpen).toBe(false);
 });
 
 test("CmdoraProvider renders its children", () => {

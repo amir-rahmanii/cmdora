@@ -1,4 +1,11 @@
-import { createContext, useContext, useRef, useSyncExternalStore, type ReactNode } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useRef,
+  useSyncExternalStore,
+  type ReactNode,
+} from "react";
 import { CommandRegistry } from "./registry.ts";
 import { CommandStateStore } from "./state.ts";
 
@@ -19,6 +26,24 @@ export function CmdoraProvider({ children }: CmdoraProviderProps) {
   if (stateRef.current === null) {
     stateRef.current = new CommandStateStore();
   }
+
+  useEffect(() => {
+    function handleKeyDown(event: KeyboardEvent): void {
+      const state = stateRef.current;
+      if (state === null) {
+        return;
+      }
+      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k") {
+        event.preventDefault();
+        state.toggle();
+      }
+    }
+
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, []);
 
   return (
     <CmdoraContext.Provider value={registryRef.current}>
