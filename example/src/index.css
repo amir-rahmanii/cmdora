@@ -228,13 +228,63 @@ kbd {
   background: rgba(128, 128, 128, 0.08);
 }
 
-/* The command palette itself is intentionally left unstyled here: Cmdora
-   ships polished `cmdora-*` default styles (see "cmdora/style.css",
-   imported in main.tsx) so no palette-specific CSS is needed in this demo.
+/* Cmdora ships polished `cmdora-*` default styles (see "cmdora/style.css",
+   imported in main.tsx), but the package itself is theme-agnostic: it has
+   no dark-mode styles or theme API. This demo overrides the `cmdora-*`
+   classes with plain CSS to show how a consumer themes Cmdora using their
+   own `data-theme` convention.
 
    CommandInput is a plain, unopinionated input with no icon of its own, so
    this demo composes its own wrapper + icon around it to show how a
    consumer builds custom UI on top of Cmdora's headless-ish primitives. */
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .cmdora-dialog {
+    background: #1c1c1f;
+    color: #f5f5f5;
+    border-color: rgba(255, 255, 255, 0.1);
+  }
+
+  :root:not([data-theme="light"]) .cmdora-input {
+    border-bottom-color: rgba(255, 255, 255, 0.1);
+  }
+
+  :root:not([data-theme="light"]) .cmdora-input::placeholder {
+    color: rgba(255, 255, 255, 0.4);
+  }
+
+  :root:not([data-theme="light"]) .cmdora-item:hover,
+  :root:not([data-theme="light"]) .cmdora-item:focus-visible {
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  :root:not([data-theme="light"]) .cmdora-empty {
+    color: rgba(255, 255, 255, 0.45);
+  }
+}
+
+html[data-theme="dark"] .cmdora-dialog {
+  background: #1c1c1f;
+  color: #f5f5f5;
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+html[data-theme="dark"] .cmdora-input {
+  border-bottom-color: rgba(255, 255, 255, 0.1);
+}
+
+html[data-theme="dark"] .cmdora-input::placeholder {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+html[data-theme="dark"] .cmdora-item:hover,
+html[data-theme="dark"] .cmdora-item:focus-visible {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+html[data-theme="dark"] .cmdora-empty {
+  color: rgba(255, 255, 255, 0.45);
+}
 
 .example-input-wrapper {
   display: flex;
