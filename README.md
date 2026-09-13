@@ -2,6 +2,8 @@
 
 A simple and customizable React command palette powered by `Ctrl + K` / `Cmd + K`.
 
+**[Live Example](https://amir-rahmanii.github.io/cmdora/)**
+
 ## Install
 
 ```bash
