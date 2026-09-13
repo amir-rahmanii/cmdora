@@ -108,7 +108,7 @@ export function App() {
       <header className="page-header">
         <div className="brand">
           <span className="brand-mark">⌘</span>
-          <span className="brand-name">Cmdora</span>
+          <span className="brand-name">Cmdora Example</span>
           <span className="badge">Styled by default</span>
         </div>
         <p className="tagline">
