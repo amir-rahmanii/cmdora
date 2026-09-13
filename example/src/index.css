@@ -28,6 +28,16 @@ body {
   }
 }
 
+html[data-theme="light"] body {
+  background: #f4f4f6;
+  color: #16161a;
+}
+
+html[data-theme="dark"] body {
+  background: #0b0b0d;
+  color: #f2f2f4;
+}
+
 .page {
   max-width: 36rem;
   margin: 0 auto;
@@ -158,6 +168,24 @@ button {
   }
 }
 
+html[data-theme="light"] .primary-button {
+  background: #16161a;
+  color: #ffffff;
+}
+
+html[data-theme="light"] .primary-button:hover {
+  background: #2a2a30;
+}
+
+html[data-theme="dark"] .primary-button {
+  background: #f2f2f4;
+  color: #16161a;
+}
+
+html[data-theme="dark"] .primary-button:hover {
+  background: #dcdce0;
+}
+
 .ghost-button {
   padding: 0.65rem 1.1rem;
   border: 1px solid rgba(128, 128, 128, 0.4);
@@ -220,6 +248,14 @@ kbd {
   .example-input-wrapper {
     border-bottom-color: rgba(255, 255, 255, 0.1);
   }
+}
+
+html[data-theme="light"] .example-input-wrapper {
+  border-bottom-color: rgba(128, 128, 128, 0.2);
+}
+
+html[data-theme="dark"] .example-input-wrapper {
+  border-bottom-color: rgba(255, 255, 255, 0.1);
 }
 
 .example-search-icon {

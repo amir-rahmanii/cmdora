@@ -61,10 +61,22 @@ function usePrefersDarkColorScheme(): boolean {
   return prefersDark;
 }
 
+type ThemeOverride = "light" | "dark" | null;
+
 export function App() {
   const [message, setMessage] = useState("No command run yet.");
   const [count, setCount] = useState(0);
   const prefersDark = usePrefersDarkColorScheme();
+  const [themeOverride, setThemeOverride] = useState<ThemeOverride>(null);
+  const isDark = themeOverride === null ? prefersDark : themeOverride === "dark";
+
+  useEffect(() => {
+    if (themeOverride === null) {
+      delete document.documentElement.dataset.theme;
+    } else {
+      document.documentElement.dataset.theme = themeOverride;
+    }
+  }, [themeOverride]);
 
   const commands: Command[] = [
     {
@@ -81,6 +93,11 @@ export function App() {
       id: "reset-counter",
       name: "Reset counter",
       execute: () => setCount(0),
+    },
+    {
+      id: "toggle-theme",
+      name: "Toggle theme",
+      execute: () => setThemeOverride(isDark ? "light" : "dark"),
     },
   ];
 
@@ -109,14 +126,14 @@ export function App() {
           <p className="card-value">{count}</p>
         </article>
         <article className="card">
-          <span className="card-label">System theme</span>
-          <p className="card-value">{prefersDark ? "Dark" : "Light"}</p>
+          <span className="card-label">Theme</span>
+          <p className="card-value">{isDark ? "Dark" : "Light"}</p>
         </article>
       </section>
 
       <p className="theme-hint">
-        This page and the command palette both follow your OS color scheme automatically. Switch
-        your system appearance to see them change together.
+        This page follows your OS color scheme by default. Run the "Toggle theme" command to
+        override it manually.
       </p>
 
       <div className="actions">
