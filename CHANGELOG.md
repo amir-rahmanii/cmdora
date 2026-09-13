@@ -1,3 +1,10 @@
+## [1.0.3](https://github.com/amir-rahmanii/cmdora/compare/v1.0.2...v1.0.3) (2026-09-13)
+
+### Bug Fixes
+
+- allow npm alongside pnpm in devEngines for semantic-release npm publish ([cd56a9b](https://github.com/amir-rahmanii/cmdora/commit/cd56a9ba282821fe825358dad0a767f41d53e54d))
+- allow pnpm auto-download on packageManager version mismatch ([842bf71](https://github.com/amir-rahmanii/cmdora/commit/842bf7176342a0b8c7035801bf90645d92f628d5))
+
 ## [1.0.2](https://github.com/amir-rahmanii/cmdora/compare/v1.0.1...v1.0.2) (2026-09-13)
 
 ### Bug Fixes
