@@ -53,10 +53,14 @@
     "react-dom": "^19.0.0"
   },
   "devEngines": {
-    "packageManager": {
-      "name": "pnpm",
-      "version": "12.3.4",
-      "onFail": "download"
-    }
+    "packageManager": [
+      {
+        "name": "pnpm",
+        "version": "12.3.4"
+      },
+      {
+        "name": "npm"
+      }
+    ]
   }
 }
