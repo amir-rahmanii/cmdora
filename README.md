@@ -1,23 +1,69 @@
-# vite-plus-starter
+# cmdora
 
-A starter for creating a Vite Plus project.
+A simple and customizable React command palette powered by `Ctrl + K` / `Cmd + K`.
 
-## Development
-
-- Install dependencies:
+## Install
 
 ```bash
-vp install
+npm install cmdora
 ```
-
-- Run the unit tests:
 
 ```bash
-vp test
+pnpm add cmdora
 ```
 
-- Build the library:
+## Usage
 
-```bash
-vp pack
+```tsx
+import { CmdoraProvider, CommandPalette, CommandInput, CommandList } from "cmdora";
+
+import "cmdora/style.css";
+
+const commands = [
+  {
+    id: "dashboard",
+    name: "Go to Dashboard",
+    execute: () => navigate("/"),
+  },
+  {
+    id: "settings",
+    name: "Open Settings",
+    execute: () => navigate("/settings"),
+  },
+];
+
+function App() {
+  return (
+    <CmdoraProvider>
+      <CommandPalette commands={commands} backdropClassName="my-backdrop">
+        <CommandInput placeholder="Search commands..." />
+        <CommandList />
+      </CommandPalette>
+    </CmdoraProvider>
+  );
+}
 ```
+
+Press `Ctrl + K` on Windows/Linux or `Cmd + K` on macOS to open the palette.
+
+## Customization
+
+Cmdora includes default styles out of the box and is fully customizable. Override the default styles or use Tailwind CSS, CSS Modules, plain CSS, or any other styling solution you prefer.
+
+`CommandPalette` supports `className` and `backdropClassName` for customizing the dialog and backdrop.
+
+All components support their relevant native HTML props and customization options.
+
+## API
+
+- `CmdoraProvider`
+- `useCommandPalette`
+- `CommandPalette`
+- `CommandInput`
+- `CommandList`
+- `CommandEmpty`
+- `Command`
+
+## License
+
+MIT

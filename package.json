@@ -1,16 +1,16 @@
 {
   "name": "cmdora",
   "version": "0.0.0",
-  "description": "A starter for creating a TypeScript package.",
-  "homepage": "https://github.com/author/library#readme",
+  "description": "A customizable React command palette powered by Ctrl + K.",
+  "homepage": "https://github.com/amir-rahmanii/cmdora#readme",
   "bugs": {
-    "url": "https://github.com/author/library/issues"
+    "url": "https://github.com/amir-rahmanii/cmdora/issues"
   },
   "license": "MIT",
-  "author": "Author Name <author.name@mail.com>",
+  "author": "Amirreza <rahmaniamirreza182@gmail.com>",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/author/library.git"
+    "url": "git+https://github.com/amir-rahmanii/cmdora.git"
   },
   "files": [
     "dist"
@@ -54,7 +54,7 @@
     "packageManager": {
       "name": "pnpm",
       "version": "12.3.4",
-      "onFail": "download"
+      "onFail": "warn"
     }
   }
 }
