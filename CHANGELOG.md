@@ -1,3 +1,9 @@
+## [1.0.2](https://github.com/amir-rahmanii/cmdora/compare/v1.0.1...v1.0.2) (2026-09-13)
+
+### Bug Fixes
+
+- consolidate test files into tests/, move provider/search/state into command-palette/ ([1fafaa7](https://github.com/amir-rahmanii/cmdora/commit/1fafaa7f75bd691605ff1a3ccf80412eaa26c91a))
+
 ## [1.0.1](https://github.com/amir-rahmanii/cmdora/compare/v1.0.0...v1.0.1) (2026-09-13)
 
 ### Bug Fixes
