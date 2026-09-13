@@ -1,10 +1,10 @@
 import { afterEach, expect, test } from "vite-plus/test";
 import { act, cleanup, fireEvent, render } from "@testing-library/react";
-import { CommandPalette } from "./command-palette.tsx";
-import { CommandInput } from "./command-input.tsx";
-import { CommandList } from "./command-list.tsx";
-import { CmdoraProvider } from "../provider.tsx";
-import type { Command } from "../index.ts";
+import { CommandPalette } from "../src/command-palette/command-palette.tsx";
+import { CommandInput } from "../src/command-palette/command-input.tsx";
+import { CommandList } from "../src/command-palette/command-list.tsx";
+import { CmdoraProvider } from "../src/command-palette/provider.tsx";
+import type { Command } from "../src/index.ts";
 
 afterEach(() => {
   cleanup();

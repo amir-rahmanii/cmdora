@@ -1,5 +1,5 @@
 import { expect, test } from "vite-plus/test";
-import { filterCommands } from "../src/search.ts";
+import { filterCommands } from "../src/command-palette/search.ts";
 import type { Command } from "../src/index.ts";
 
 function makeCommand(id: string, name: string): Command {

@@ -1,7 +1,11 @@
 import { afterEach, expect, test } from "vite-plus/test";
 import { act, cleanup, fireEvent, render, renderHook } from "@testing-library/react";
-import { CmdoraProvider, useCommandPalette, useCommandState } from "../src/provider.tsx";
-import { CommandStateStore } from "../src/state.ts";
+import {
+  CmdoraProvider,
+  useCommandPalette,
+  useCommandState,
+} from "../src/command-palette/provider.tsx";
+import { CommandStateStore } from "../src/command-palette/state.ts";
 
 afterEach(() => {
   cleanup();

@@ -1,8 +1,8 @@
 import { useEffect, useRef, useSyncExternalStore, type ComponentPropsWithoutRef } from "react";
 import { createPortal } from "react-dom";
 import type { Command } from "../index.ts";
-import { useCommandState } from "../provider.tsx";
-import { filterCommands } from "../search.ts";
+import { useCommandState } from "./provider.tsx";
+import { filterCommands } from "./search.ts";
 import { CommandPaletteContext } from "./command-palette-context.tsx";
 import { cn } from "./cn.ts";
 import "../styles.css";

@@ -1,4 +1,4 @@
-import type { Command } from "./index.ts";
+import type { Command } from "../index.ts";
 
 export function filterCommands(commands: Command[], query: string): Command[] {
   const normalizedQuery = query.trim().toLowerCase();

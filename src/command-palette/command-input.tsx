@@ -1,5 +1,5 @@
 import { useSyncExternalStore, type ComponentPropsWithoutRef } from "react";
-import { useCommandState } from "../provider.tsx";
+import { useCommandState } from "./provider.tsx";
 import { cn } from "./cn.ts";
 
 export interface CommandInputProps extends Omit<ComponentPropsWithoutRef<"input">, "value"> {}

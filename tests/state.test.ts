@@ -1,5 +1,5 @@
 import { expect, test } from "vite-plus/test";
-import { CommandStateStore } from "../src/state.ts";
+import { CommandStateStore } from "../src/command-palette/state.ts";
 
 test("initial state", () => {
   const store = new CommandStateStore();
