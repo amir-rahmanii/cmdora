@@ -1,3 +1,9 @@
+## [1.0.1](https://github.com/amir-rahmanii/cmdora/compare/v1.0.0...v1.0.1) (2026-09-13)
+
+### Bug Fixes
+
+- remove theme support from cmdora, keep it in example ([db66785](https://github.com/amir-rahmanii/cmdora/commit/db66785e19ebcc4ba7b3ab0cd6839a9fb3b0a5a7))
+
 # 1.0.0 (2026-09-13)
 
 ### Bug Fixes
