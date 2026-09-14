@@ -1,4 +1,4 @@
-import { afterEach, expect, test } from "vite-plus/test";
+import { afterEach, expect, it } from "vite-plus/test";
 import { act, cleanup, fireEvent, render } from "@testing-library/react";
 import { CommandPalette } from "../src/command-palette/command-palette.tsx";
 import { CommandInput } from "../src/command-palette/command-input.tsx";
@@ -31,7 +31,7 @@ function openPalette(): void {
   });
 }
 
-test("CommandPalette renders nothing while closed", () => {
+it("CommandPalette renders nothing while closed", () => {
   const commands = [makeCommand("a")];
 
   render(
@@ -43,7 +43,7 @@ test("CommandPalette renders nothing while closed", () => {
   expect(document.body.querySelector('[data-testid="palette"]')).toBeNull();
 });
 
-test("CommandPalette renders its children through a portal once opened", () => {
+it("CommandPalette renders its children through a portal once opened", () => {
   const commands = [makeCommand("a")];
 
   const { container } = render(
@@ -62,7 +62,7 @@ test("CommandPalette renders its children through a portal once opened", () => {
   expect(container.contains(palette)).toBe(false);
 });
 
-test("CommandPalette forwards className and native div attributes", () => {
+it("CommandPalette forwards className and native div attributes", () => {
   const commands = [makeCommand("a")];
 
   render(
@@ -77,7 +77,7 @@ test("CommandPalette forwards className and native div attributes", () => {
   expect(palette).not.toBeNull();
 });
 
-test("CommandPalette has dialog semantics with an accessible name", () => {
+it("CommandPalette has dialog semantics with an accessible name", () => {
   const commands = [makeCommand("a")];
 
   render(
@@ -91,12 +91,10 @@ test("CommandPalette has dialog semantics with an accessible name", () => {
   const palette = document.body.querySelector('[data-testid="palette"]');
   expect(palette?.getAttribute("role")).toBe("dialog");
   expect(palette?.getAttribute("aria-modal")).toBe("true");
-  expect(palette?.hasAttribute("aria-label") || palette?.hasAttribute("aria-labelledby")).toBe(
-    true,
-  );
+  expect(palette?.hasAttribute("aria-label")).toBe(true);
 });
 
-test("a custom aria-label overrides the default accessible name", () => {
+it("a custom aria-label overrides the default accessible name", () => {
   const commands = [makeCommand("a")];
 
   render(
@@ -111,7 +109,7 @@ test("a custom aria-label overrides the default accessible name", () => {
   expect(palette?.getAttribute("aria-label")).toBe("Commands");
 });
 
-test("renders a backdrop behind the dialog with the default cmdora-backdrop class", () => {
+it("renders a backdrop behind the dialog with the default cmdora-backdrop class", () => {
   const commands = [makeCommand("a")];
 
   render(
@@ -129,7 +127,7 @@ test("renders a backdrop behind the dialog with the default cmdora-backdrop clas
   expect(backdrop.contains(palette)).toBe(true);
 });
 
-test("backdropClassName is accepted and merged with the default backdrop class", () => {
+it("backdropClassName is accepted and merged with the default backdrop class", () => {
   const commands = [makeCommand("a")];
 
   render(
@@ -150,7 +148,7 @@ test("backdropClassName is accepted and merged with the default backdrop class",
   expect(backdrop.className).toContain("my-backdrop");
 });
 
-test("the dialog, input, and list carry their default cmdora-* classes", () => {
+it("the dialog, input, and list carry their default cmdora-* classes", () => {
   const commands = [makeCommand("a")];
 
   const { getByTestId } = render(
@@ -171,7 +169,7 @@ test("the dialog, input, and list carry their default cmdora-* classes", () => {
   expect(getByTestId("list").className).toContain("cmdora-list");
 });
 
-test("className props are merged with defaults, not replaced", () => {
+it("className props are merged with defaults, not replaced", () => {
   const commands = [namedCommand("a", "Say hello")];
 
   const { getByTestId, getByText } = render(
@@ -219,7 +217,7 @@ function renderModal(commands: Command[]) {
   return { ...utils, trigger };
 }
 
-test("portaled content is removed from the DOM when the palette closes", () => {
+it("portaled content is removed from the DOM when the palette closes", () => {
   const commands = [makeCommand("a")];
 
   renderModal(commands);
@@ -231,7 +229,7 @@ test("portaled content is removed from the DOM when the palette closes", () => {
   expect(document.body.querySelector('[data-testid="palette"]')).toBeNull();
 });
 
-test("portaled content is removed from the DOM on unmount", () => {
+it("portaled content is removed from the DOM on unmount", () => {
   const commands = [makeCommand("a")];
 
   const { unmount } = renderModal(commands);
@@ -244,7 +242,7 @@ test("portaled content is removed from the DOM on unmount", () => {
   expect(document.body.querySelector('[data-testid="palette"]')).toBeNull();
 });
 
-test("Escape closes the palette", () => {
+it("Escape closes the palette", () => {
   const commands = [makeCommand("a")];
 
   renderModal(commands);
@@ -259,7 +257,7 @@ test("Escape closes the palette", () => {
   expect(document.body.querySelector('[data-testid="palette"]')).toBeNull();
 });
 
-test("clicking outside the dialog closes the palette", () => {
+it("clicking outside the dialog closes the palette", () => {
   const commands = [makeCommand("a")];
 
   renderModal(commands);
@@ -272,7 +270,7 @@ test("clicking outside the dialog closes the palette", () => {
   expect(document.body.querySelector('[data-testid="palette"]')).toBeNull();
 });
 
-test("clicking inside the dialog does not close the palette", () => {
+it("clicking inside the dialog does not close the palette", () => {
   const commands = [namedCommand("a", "Say hello")];
 
   const { getByTestId } = renderModal(commands);
@@ -285,7 +283,7 @@ test("clicking inside the dialog does not close the palette", () => {
   expect(document.body.querySelector('[data-testid="palette"]')).not.toBeNull();
 });
 
-test("CommandInput receives focus when the palette opens", () => {
+it("CommandInput receives focus when the palette opens", () => {
   const commands = [makeCommand("a")];
 
   const { getByTestId } = renderModal(commands);
@@ -294,7 +292,7 @@ test("CommandInput receives focus when the palette opens", () => {
   expect(document.activeElement).toBe(getByTestId("input"));
 });
 
-test("focus is restored to the previously focused element when the palette closes", () => {
+it("focus is restored to the previously focused element when the palette closes", () => {
   const commands = [makeCommand("a")];
 
   const { trigger } = renderModal(commands);
@@ -308,7 +306,7 @@ test("focus is restored to the previously focused element when the palette close
   expect(document.activeElement).toBe(trigger);
 });
 
-test("body scrolling is disabled while the palette is open and restored afterward", () => {
+it("body scrolling is disabled while the palette is open and restored afterward", () => {
   const commands = [makeCommand("a")];
 
   document.body.style.overflow = "auto";
@@ -321,7 +319,7 @@ test("body scrolling is disabled while the palette is open and restored afterwar
   expect(document.body.style.overflow).toBe("auto");
 });
 
-test("repeated open/close cycles do not leak listeners or break behavior", () => {
+it("repeated open/close cycles do not leak listeners or break behavior", () => {
   const commands = [makeCommand("a")];
 
   const { trigger } = renderModal(commands);
@@ -339,7 +337,7 @@ test("repeated open/close cycles do not leak listeners or break behavior", () =>
   expect(document.body.style.overflow).toBe("");
 });
 
-test("unmounting while open cleans up body overflow", () => {
+it("unmounting while open cleans up body overflow", () => {
   const commands = [makeCommand("a")];
 
   const { unmount } = renderModal(commands);

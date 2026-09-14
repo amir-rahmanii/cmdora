@@ -1,7 +1,7 @@
-import { expect, test } from "vite-plus/test";
+import { expect, it } from "vite-plus/test";
 import { CommandStateStore } from "../src/command-palette/state.ts";
 
-test("initial state", () => {
+it("initial state", () => {
   const store = new CommandStateStore();
 
   expect(store.getState()).toEqual({
@@ -10,7 +10,7 @@ test("initial state", () => {
   });
 });
 
-test("setQuery updates query", () => {
+it("setQuery updates query", () => {
   const store = new CommandStateStore();
 
   store.setQuery("foo");
@@ -18,7 +18,7 @@ test("setQuery updates query", () => {
   expect(store.getState().query).toBe("foo");
 });
 
-test("open sets isOpen to true", () => {
+it("open sets isOpen to true", () => {
   const store = new CommandStateStore();
 
   store.open();
@@ -26,7 +26,7 @@ test("open sets isOpen to true", () => {
   expect(store.getState().isOpen).toBe(true);
 });
 
-test("close sets isOpen to false", () => {
+it("close sets isOpen to false", () => {
   const store = new CommandStateStore();
 
   store.open();
@@ -35,7 +35,7 @@ test("close sets isOpen to false", () => {
   expect(store.getState().isOpen).toBe(false);
 });
 
-test("toggle switches isOpen", () => {
+it("toggle switches isOpen", () => {
   const store = new CommandStateStore();
 
   store.toggle();
@@ -45,12 +45,12 @@ test("toggle switches isOpen", () => {
   expect(store.getState().isOpen).toBe(false);
 });
 
-test("subscribe notifies listeners on change", () => {
+it("subscribe notifies listeners on change", () => {
   const store = new CommandStateStore();
   let callCount = 0;
 
   store.subscribe(() => {
-    callCount++;
+    callCount += 1;
   });
 
   store.setQuery("foo");
@@ -59,12 +59,12 @@ test("subscribe notifies listeners on change", () => {
   expect(callCount).toBe(2);
 });
 
-test("subscribe returns an unsubscribe function", () => {
+it("subscribe returns an unsubscribe function", () => {
   const store = new CommandStateStore();
   let callCount = 0;
 
   const unsubscribe = store.subscribe(() => {
-    callCount++;
+    callCount += 1;
   });
 
   store.setQuery("foo");

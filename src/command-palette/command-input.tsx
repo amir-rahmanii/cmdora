@@ -1,10 +1,15 @@
-import { useSyncExternalStore, type ComponentPropsWithoutRef } from "react";
-import { useCommandState } from "./provider.tsx";
+import { useSyncExternalStore, type ComponentPropsWithoutRef, type ReactNode } from "react";
+import { useCommandState } from "./state-context.ts";
 import { cn } from "./cn.ts";
 
 export interface CommandInputProps extends Omit<ComponentPropsWithoutRef<"input">, "value"> {}
 
-export function CommandInput({ onChange, type = "text", className, ...rest }: CommandInputProps) {
+export function CommandInput({
+  onChange,
+  type = "text",
+  className,
+  ...rest
+}: CommandInputProps): ReactNode {
   const state = useCommandState();
   const query = useSyncExternalStore(
     (listener) => state.subscribe(listener),

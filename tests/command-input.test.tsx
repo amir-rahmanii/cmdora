@@ -1,4 +1,4 @@
-import { afterEach, expect, test } from "vite-plus/test";
+import { afterEach, expect, it } from "vite-plus/test";
 import { act, cleanup, fireEvent, render } from "@testing-library/react";
 import { CommandInput } from "../src/command-palette/command-input.tsx";
 import { CommandPalette } from "../src/command-palette/command-palette.tsx";
@@ -20,7 +20,7 @@ function openPalette(): void {
   });
 }
 
-test("CommandInput reflects and updates the shared query state", () => {
+it("CommandInput reflects and updates the shared query state", () => {
   const commands = [makeCommand("a")];
 
   const { getByTestId } = render(
@@ -41,9 +41,9 @@ test("CommandInput reflects and updates the shared query state", () => {
   expect(input.value).toBe("hello");
 });
 
-test("CommandInput calls the consumer's onChange handler", () => {
+it("CommandInput calls the consumer's onChange handler", () => {
   const commands = [makeCommand("a")];
-  let receivedValue: string | undefined;
+  let receivedValue: string | undefined = undefined;
 
   const { getByTestId } = render(
     <CmdoraProvider>
@@ -65,7 +65,7 @@ test("CommandInput calls the consumer's onChange handler", () => {
   expect(receivedValue).toBe("hello");
 });
 
-test("CommandInput supports normal input props such as placeholder and autoFocus", () => {
+it("CommandInput supports normal input props such as placeholder and autoFocus", () => {
   const commands = [makeCommand("a")];
 
   const { getByTestId } = render(
@@ -82,7 +82,7 @@ test("CommandInput supports normal input props such as placeholder and autoFocus
   expect(input.placeholder).toBe("Type a command...");
 });
 
-test("CommandInput renders a plain input with no built-in icon or wrapper", () => {
+it("CommandInput renders a plain input with no built-in icon or wrapper", () => {
   const commands = [makeCommand("a")];
 
   const { getByTestId } = render(

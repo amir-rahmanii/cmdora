@@ -1,8 +1,8 @@
-import { expect, test } from "vite-plus/test";
+import { expect, it } from "vite-plus/test";
 import * as CmdoraPublicApi from "../src/index.ts";
 import type { Command } from "../src/index.ts";
 
-test("Command can be created and executed", async () => {
+it("Command can be created and executed", async () => {
   let executed = false;
 
   const command: Command = {
@@ -20,7 +20,7 @@ test("Command can be created and executed", async () => {
   expect(executed).toBe(true);
 });
 
-test("public API exposes only the intended runtime exports", () => {
+it("public API exposes only the intended runtime exports", () => {
   expect(Object.keys(CmdoraPublicApi).sort()).toEqual([
     "CmdoraProvider",
     "CommandEmpty",

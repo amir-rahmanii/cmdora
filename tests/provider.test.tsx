@@ -1,17 +1,14 @@
-import { afterEach, expect, test } from "vite-plus/test";
+import { afterEach, expect, it } from "vite-plus/test";
 import { act, cleanup, fireEvent, render, renderHook } from "@testing-library/react";
-import {
-  CmdoraProvider,
-  useCommandPalette,
-  useCommandState,
-} from "../src/command-palette/provider.tsx";
+import { CmdoraProvider } from "../src/command-palette/provider.tsx";
+import { useCommandPalette, useCommandState } from "../src/command-palette/state-context.ts";
 import { CommandStateStore } from "../src/command-palette/state.ts";
 
 afterEach(() => {
   cleanup();
 });
 
-test("useCommandState returns a CommandStateStore inside CmdoraProvider", () => {
+it("useCommandState returns a CommandStateStore inside CmdoraProvider", () => {
   const { result } = renderHook(() => useCommandState(), {
     wrapper: CmdoraProvider,
   });
@@ -19,7 +16,7 @@ test("useCommandState returns a CommandStateStore inside CmdoraProvider", () => 
   expect(result.current).toBeInstanceOf(CommandStateStore);
 });
 
-test("useCommandState returns the same store instance across re-renders", () => {
+it("useCommandState returns the same store instance across re-renders", () => {
   const { result, rerender } = renderHook(() => useCommandState(), {
     wrapper: CmdoraProvider,
   });
@@ -30,7 +27,7 @@ test("useCommandState returns the same store instance across re-renders", () => 
   expect(result.current).toBe(first);
 });
 
-test("useCommandState throws when used outside CmdoraProvider", () => {
+it("useCommandState throws when used outside CmdoraProvider", () => {
   const { result } = renderHook(() => {
     try {
       return useCommandState();
@@ -45,7 +42,7 @@ test("useCommandState throws when used outside CmdoraProvider", () => {
   );
 });
 
-test("useCommandPalette starts closed", () => {
+it("useCommandPalette starts closed", () => {
   const { result } = renderHook(() => useCommandPalette(), {
     wrapper: CmdoraProvider,
   });
@@ -53,7 +50,7 @@ test("useCommandPalette starts closed", () => {
   expect(result.current.isOpen).toBe(false);
 });
 
-test("useCommandPalette open sets isOpen to true", () => {
+it("useCommandPalette open sets isOpen to true", () => {
   const { result } = renderHook(() => useCommandPalette(), {
     wrapper: CmdoraProvider,
   });
@@ -65,7 +62,7 @@ test("useCommandPalette open sets isOpen to true", () => {
   expect(result.current.isOpen).toBe(true);
 });
 
-test("useCommandPalette close sets isOpen to false", () => {
+it("useCommandPalette close sets isOpen to false", () => {
   const { result } = renderHook(() => useCommandPalette(), {
     wrapper: CmdoraProvider,
   });
@@ -80,7 +77,7 @@ test("useCommandPalette close sets isOpen to false", () => {
   expect(result.current.isOpen).toBe(false);
 });
 
-test("useCommandPalette toggle switches isOpen", () => {
+it("useCommandPalette toggle switches isOpen", () => {
   const { result } = renderHook(() => useCommandPalette(), {
     wrapper: CmdoraProvider,
   });
@@ -96,7 +93,7 @@ test("useCommandPalette toggle switches isOpen", () => {
   expect(result.current.isOpen).toBe(false);
 });
 
-test("useCommandPalette throws when used outside CmdoraProvider", () => {
+it("useCommandPalette throws when used outside CmdoraProvider", () => {
   const { result } = renderHook(() => {
     try {
       return useCommandPalette();
@@ -108,7 +105,7 @@ test("useCommandPalette throws when used outside CmdoraProvider", () => {
   expect(result.current).toBeInstanceOf(Error);
 });
 
-test("Ctrl+K toggles the palette open", () => {
+it("Ctrl+K toggles the palette open", () => {
   const { result } = renderHook(() => useCommandPalette(), {
     wrapper: CmdoraProvider,
   });
@@ -120,7 +117,7 @@ test("Ctrl+K toggles the palette open", () => {
   expect(result.current.isOpen).toBe(true);
 });
 
-test("Cmd+K (metaKey) toggles the palette open", () => {
+it("Cmd+K (metaKey) toggles the palette open", () => {
   const { result } = renderHook(() => useCommandPalette(), {
     wrapper: CmdoraProvider,
   });
@@ -132,7 +129,7 @@ test("Cmd+K (metaKey) toggles the palette open", () => {
   expect(result.current.isOpen).toBe(true);
 });
 
-test("Ctrl+K twice toggles the palette closed again", () => {
+it("Ctrl+K twice toggles the palette closed again", () => {
   const { result } = renderHook(() => useCommandPalette(), {
     wrapper: CmdoraProvider,
   });
@@ -147,7 +144,7 @@ test("Ctrl+K twice toggles the palette closed again", () => {
   expect(result.current.isOpen).toBe(false);
 });
 
-test("K without Ctrl/Cmd does not toggle the palette", () => {
+it("K without Ctrl/Cmd does not toggle the palette", () => {
   const { result } = renderHook(() => useCommandPalette(), {
     wrapper: CmdoraProvider,
   });
@@ -159,7 +156,7 @@ test("K without Ctrl/Cmd does not toggle the palette", () => {
   expect(result.current.isOpen).toBe(false);
 });
 
-test("Ctrl+K prevents the browser default action", () => {
+it("Ctrl+K prevents the browser default action", () => {
   renderHook(() => useCommandPalette(), {
     wrapper: CmdoraProvider,
   });
@@ -177,7 +174,7 @@ test("Ctrl+K prevents the browser default action", () => {
   expect(event.defaultPrevented).toBe(true);
 });
 
-test("Ctrl+K listener is removed after unmount", () => {
+it("Ctrl+K listener is removed after unmount", () => {
   const { result, unmount } = renderHook(() => useCommandPalette(), {
     wrapper: CmdoraProvider,
   });
@@ -198,7 +195,7 @@ test("Ctrl+K listener is removed after unmount", () => {
   expect(result.current.isOpen).toBe(false);
 });
 
-test("CmdoraProvider renders its children", () => {
+it("CmdoraProvider renders its children", () => {
   const { getByText } = render(
     <CmdoraProvider>
       <span>child</span>

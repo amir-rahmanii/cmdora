@@ -1,25 +1,13 @@
-import {
-  createContext,
-  useContext,
-  useEffect,
-  useRef,
-  useSyncExternalStore,
-  type ReactNode,
-} from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { CommandStateStore } from "./state.ts";
-
-const CommandStateContext = createContext<CommandStateStore | null>(null);
+import { CommandStateContext } from "./state-context.ts";
 
 export interface CmdoraProviderProps {
   children?: ReactNode;
 }
 
-export function CmdoraProvider({ children }: CmdoraProviderProps) {
-  const stateRef = useRef<CommandStateStore | null>(null);
-  if (stateRef.current === null) {
-    stateRef.current = new CommandStateStore();
-  }
-  const state = stateRef.current;
+export function CmdoraProvider({ children }: CmdoraProviderProps): ReactNode {
+  const [state, setState] = useState(() => new CommandStateStore());
 
   useEffect(() => {
     function handleKeyDown(event: KeyboardEvent): void {
@@ -36,34 +24,4 @@ export function CmdoraProvider({ children }: CmdoraProviderProps) {
   }, [state]);
 
   return <CommandStateContext.Provider value={state}>{children}</CommandStateContext.Provider>;
-}
-
-export function useCommandState(): CommandStateStore {
-  const state = useContext(CommandStateContext);
-  if (state === null) {
-    throw new Error("useCommandState must be used within a CmdoraProvider");
-  }
-  return state;
-}
-
-export interface UseCommandPaletteResult {
-  isOpen: boolean;
-  open: () => void;
-  close: () => void;
-  toggle: () => void;
-}
-
-export function useCommandPalette(): UseCommandPaletteResult {
-  const state = useCommandState();
-  const isOpen = useSyncExternalStore(
-    (listener) => state.subscribe(listener),
-    () => state.getState().isOpen,
-  );
-
-  return {
-    isOpen,
-    open: () => state.open(),
-    close: () => state.close(),
-    toggle: () => state.toggle(),
-  };
 }

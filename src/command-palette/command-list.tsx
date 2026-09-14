@@ -1,4 +1,4 @@
-import type { ComponentPropsWithoutRef } from "react";
+import type { ComponentPropsWithoutRef, ReactNode } from "react";
 import type { Command } from "../index.ts";
 import { useCommandPaletteContext } from "./command-palette-context.tsx";
 import { cn } from "./cn.ts";
@@ -7,7 +7,12 @@ export interface CommandListProps extends ComponentPropsWithoutRef<"div"> {
   itemClassName?: string;
 }
 
-export function CommandList({ className, itemClassName, children, ...rest }: CommandListProps) {
+export function CommandList({
+  className,
+  itemClassName,
+  children,
+  ...rest
+}: CommandListProps): ReactNode {
   const { commands, close } = useCommandPaletteContext();
 
   return (
@@ -28,7 +33,7 @@ export function CommandList({ className, itemClassName, children, ...rest }: Com
 
 export interface CommandEmptyProps extends ComponentPropsWithoutRef<"p"> {}
 
-export function CommandEmpty({ className, ...rest }: CommandEmptyProps) {
+export function CommandEmpty({ className, ...rest }: CommandEmptyProps): ReactNode {
   return <p {...rest} className={cn("cmdora-empty", className)} />;
 }
 

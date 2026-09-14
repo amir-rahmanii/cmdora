@@ -1,4 +1,4 @@
-import { expect, test } from "vite-plus/test";
+import { expect, it } from "vite-plus/test";
 import { filterCommands } from "../src/command-palette/search.ts";
 import type { Command } from "../src/index.ts";
 
@@ -12,32 +12,32 @@ const commands: Command[] = [
   makeCommand("c", "Toggle dark mode"),
 ];
 
-test("empty query returns all commands", () => {
+it("empty query returns all commands", () => {
   expect(filterCommands(commands, "")).toEqual(commands);
 });
 
-test("whitespace-only query returns all commands", () => {
+it("whitespace-only query returns all commands", () => {
   expect(filterCommands(commands, "   ")).toEqual(commands);
 });
 
-test("matches by command name", () => {
+it("matches by command name", () => {
   expect(filterCommands(commands, "hello")).toEqual([commands[0]]);
 });
 
-test("search is case-insensitive", () => {
+it("search is case-insensitive", () => {
   expect(filterCommands(commands, "HELLO")).toEqual([commands[0]]);
   expect(filterCommands(commands, "ToGgLe")).toEqual([commands[2]]);
 });
 
-test("search trims surrounding whitespace", () => {
+it("search trims surrounding whitespace", () => {
   expect(filterCommands(commands, "  hello  ")).toEqual([commands[0]]);
 });
 
-test("unmatched query returns no commands", () => {
+it("unmatched query returns no commands", () => {
   expect(filterCommands(commands, "nonexistent")).toEqual([]);
 });
 
-test("preserves original command order for multiple matches", () => {
+it("preserves original command order for multiple matches", () => {
   const ordered: Command[] = [
     makeCommand("x", "Xylophone"),
     makeCommand("y", "Copy file"),

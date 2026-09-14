@@ -1,4 +1,4 @@
-import { afterEach, expect, test } from "vite-plus/test";
+import { afterEach, expect, it } from "vite-plus/test";
 import { act, cleanup, fireEvent, render } from "@testing-library/react";
 import { CommandEmpty, CommandList } from "../src/command-palette/command-list.tsx";
 import { CommandInput } from "../src/command-palette/command-input.tsx";
@@ -31,7 +31,7 @@ function openPalette(): void {
   });
 }
 
-test("CommandList automatically renders all commands without any consumer mapping", () => {
+it("CommandList automatically renders all commands without any consumer mapping", () => {
   const commands = [
     namedCommand("a", "Say hello"),
     namedCommand("b", "Increment counter"),
@@ -51,7 +51,7 @@ test("CommandList automatically renders all commands without any consumer mappin
   expect(getByTestId("list").textContent).toBe("Say helloIncrement counterToggle dark mode");
 });
 
-test("CommandList renders each command as a real, natively focusable button", () => {
+it("CommandList renders each command as a real, natively focusable button", () => {
   const commands = [namedCommand("a", "Say hello")];
 
   const { getByText } = render(
@@ -68,11 +68,11 @@ test("CommandList renders each command as a real, natively focusable button", ()
   expect(item.tagName).toBe("BUTTON");
 });
 
-test("CommandList throws when used outside a CommandPalette", () => {
+it("CommandList throws when used outside a CommandPalette", () => {
   expect(() => render(<CommandList />)).toThrow("CommandList must be used within a CommandPalette");
 });
 
-test("CommandList shows an empty state when there are no commands to show", () => {
+it("CommandList shows an empty state when there are no commands to show", () => {
   render(
     <CmdoraProvider>
       <CommandPalette commands={[]}>
@@ -86,7 +86,7 @@ test("CommandList shows an empty state when there are no commands to show", () =
   expect(document.body.textContent).toContain("No commands found");
 });
 
-test("consumers can replace the default empty state via CommandList children", () => {
+it("consumers can replace the default empty state via CommandList children", () => {
   render(
     <CmdoraProvider>
       <CommandPalette commands={[]}>
@@ -103,7 +103,7 @@ test("consumers can replace the default empty state via CommandList children", (
   expect(document.body.textContent).not.toContain("No commands found");
 });
 
-test("consumers can replace the empty state with completely custom content", () => {
+it("consumers can replace the empty state with completely custom content", () => {
   render(
     <CmdoraProvider>
       <CommandPalette commands={[]}>
@@ -119,7 +119,7 @@ test("consumers can replace the empty state with completely custom content", () 
   expect(document.body.textContent).toContain("custom empty markup");
 });
 
-test("CommandEmpty renders with the default class and supports a custom className", () => {
+it("CommandEmpty renders with the default class and supports a custom className", () => {
   render(
     <CmdoraProvider>
       <CommandPalette commands={[]}>
@@ -137,7 +137,7 @@ test("CommandEmpty renders with the default class and supports a custom classNam
   expect(empty?.className).toContain("my-empty");
 });
 
-test("CommandList applies itemClassName to rendered command items", () => {
+it("CommandList applies itemClassName to rendered command items", () => {
   const commands = [namedCommand("a", "Say hello")];
 
   render(
@@ -155,7 +155,7 @@ test("CommandList applies itemClassName to rendered command items", () => {
   expect(item?.className).toContain("my-item");
 });
 
-test("CommandList does not show the empty state when commands match", () => {
+it("CommandList does not show the empty state when commands match", () => {
   const commands = [namedCommand("a", "Say hello")];
 
   render(
@@ -171,7 +171,7 @@ test("CommandList does not show the empty state when commands match", () => {
   expect(document.body.textContent).not.toContain("No commands found");
 });
 
-test("activating a rendered command executes it and closes the palette", () => {
+it("activating a rendered command executes it and closes the palette", () => {
   let executed = false;
   const command = makeCommand("a", () => {
     executed = true;
@@ -210,7 +210,7 @@ function renderSearchablePalette(commands: Command[]) {
   return utils;
 }
 
-test("typing into CommandInput updates the query and automatically filters CommandList", () => {
+it("typing into CommandInput updates the query and automatically filters CommandList", () => {
   const commands = [
     namedCommand("a", "Say hello"),
     namedCommand("b", "Increment counter"),
@@ -226,7 +226,7 @@ test("typing into CommandInput updates the query and automatically filters Comma
   expect(getByTestId("list").textContent).toBe("Say hello");
 });
 
-test("search is case-insensitive", () => {
+it("search is case-insensitive", () => {
   const commands = [namedCommand("a", "Say hello"), namedCommand("b", "Toggle dark mode")];
 
   const { getByTestId } = renderSearchablePalette(commands);
@@ -236,7 +236,7 @@ test("search is case-insensitive", () => {
   expect(getByTestId("list").textContent).toBe("Say hello");
 });
 
-test("search trims surrounding whitespace", () => {
+it("search trims surrounding whitespace", () => {
   const commands = [namedCommand("a", "Say hello"), namedCommand("b", "Toggle dark mode")];
 
   const { getByTestId } = renderSearchablePalette(commands);
@@ -246,7 +246,7 @@ test("search trims surrounding whitespace", () => {
   expect(getByTestId("list").textContent).toBe("Say hello");
 });
 
-test("unmatched query shows the empty state instead of the list", () => {
+it("unmatched query shows the empty state instead of the list", () => {
   const commands = [namedCommand("a", "Say hello"), namedCommand("b", "Toggle dark mode")];
 
   const { getByTestId, getByText, queryByRole } = renderSearchablePalette(commands);
@@ -257,7 +257,7 @@ test("unmatched query shows the empty state instead of the list", () => {
   expect(queryByRole("button")).toBeNull();
 });
 
-test("CommandList preserves the original command order for multiple matches", () => {
+it("CommandList preserves the original command order for multiple matches", () => {
   const commands = [
     namedCommand("x", "Xylophone"),
     namedCommand("y", "Copy file"),

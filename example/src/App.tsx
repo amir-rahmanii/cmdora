@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import {
   CommandEmpty,
   CommandInput,
@@ -63,7 +63,47 @@ function usePrefersDarkColorScheme(): boolean {
 
 type ThemeOverride = "light" | "dark" | null;
 
-export function App() {
+function PageHeader() {
+  return (
+    <header className="page-header">
+      <div className="brand">
+        <span className="brand-mark">⌘</span>
+        <span className="brand-name">Cmdora Example</span>
+        <span className="badge">Styled by default</span>
+      </div>
+      <p className="tagline">
+        A lightweight command palette for React — styled by default, customizable when needed.
+      </p>
+    </header>
+  );
+}
+
+interface StatCardsProps {
+  message: string;
+  count: number;
+  isDark: boolean;
+}
+
+function StatCards({ message, count, isDark }: StatCardsProps) {
+  return (
+    <section className="cards">
+      <article className="card">
+        <span className="card-label">Message</span>
+        <p className="card-value">{message}</p>
+      </article>
+      <article className="card">
+        <span className="card-label">Counter</span>
+        <p className="card-value">{count}</p>
+      </article>
+      <article className="card">
+        <span className="card-label">Theme</span>
+        <p className="card-value">{isDark ? "Dark" : "Light"}</p>
+      </article>
+    </section>
+  );
+}
+
+export function App(): ReactNode {
   const [message, setMessage] = useState("No command run yet.");
   const [count, setCount] = useState(0);
   const prefersDark = usePrefersDarkColorScheme();
@@ -105,35 +145,12 @@ export function App() {
 
   return (
     <main className="page">
-      <header className="page-header">
-        <div className="brand">
-          <span className="brand-mark">⌘</span>
-          <span className="brand-name">Cmdora Example</span>
-          <span className="badge">Styled by default</span>
-        </div>
-        <p className="tagline">
-          A lightweight command palette for React — styled by default, customizable when needed.
-        </p>
-      </header>
-
-      <section className="cards">
-        <article className="card">
-          <span className="card-label">Message</span>
-          <p className="card-value">{message}</p>
-        </article>
-        <article className="card">
-          <span className="card-label">Counter</span>
-          <p className="card-value">{count}</p>
-        </article>
-        <article className="card">
-          <span className="card-label">Theme</span>
-          <p className="card-value">{isDark ? "Dark" : "Light"}</p>
-        </article>
-      </section>
+      <PageHeader />
+      <StatCards message={message} count={count} isDark={isDark} />
 
       <p className="theme-hint">
-        This page follows your OS color scheme by default. Run the "Toggle theme" command to
-        override it manually.
+        This page follows your OS color scheme by default. Run the &quot;Toggle theme&quot; command
+        to override it manually.
       </p>
 
       <div className="actions">

@@ -1,7 +1,14 @@
-import { useEffect, useRef, useSyncExternalStore, type ComponentPropsWithoutRef } from "react";
+import {
+  useEffect,
+  useMemo,
+  useRef,
+  useSyncExternalStore,
+  type ComponentPropsWithoutRef,
+  type ReactNode,
+} from "react";
 import { createPortal } from "react-dom";
 import type { Command } from "../index.ts";
-import { useCommandState } from "./provider.tsx";
+import { useCommandState } from "./state-context.ts";
 import { filterCommands } from "./search.ts";
 import { CommandPaletteContext } from "./command-palette-context.tsx";
 import { cn } from "./cn.ts";
@@ -17,7 +24,7 @@ export function CommandPalette({
   backdropClassName,
   className,
   ...rest
-}: CommandPaletteProps) {
+}: CommandPaletteProps): ReactNode {
   const state = useCommandState();
   const { isOpen, query } = useSyncExternalStore(
     (listener) => state.subscribe(listener),
@@ -62,15 +69,18 @@ export function CommandPalette({
     };
   }, [isOpen, state]);
 
+  const contextValue = useMemo(
+    () => ({ commands: filteredCommands, close: () => state.close() }),
+    [filteredCommands, state],
+  );
+
   if (!isOpen) {
     return null;
   }
 
   return createPortal(
     <div className={cn("cmdora-backdrop", backdropClassName)}>
-      <CommandPaletteContext.Provider
-        value={{ commands: filteredCommands, close: () => state.close() }}
-      >
+      <CommandPaletteContext.Provider value={contextValue}>
         <div
           role="dialog"
           aria-modal="true"

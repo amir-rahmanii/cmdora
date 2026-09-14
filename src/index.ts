@@ -4,8 +4,11 @@ export interface Command {
   execute: () => void | Promise<void>;
 }
 
-export { CmdoraProvider, useCommandPalette } from "./command-palette/provider.tsx";
-export type { CmdoraProviderProps, UseCommandPaletteResult } from "./command-palette/provider.tsx";
+export { CmdoraProvider } from "./command-palette/provider.tsx";
+export type { CmdoraProviderProps } from "./command-palette/provider.tsx";
+
+export { useCommandPalette } from "./command-palette/state-context.ts";
+export type { UseCommandPaletteResult } from "./command-palette/state-context.ts";
 
 export { CommandPalette } from "./command-palette/command-palette.tsx";
 export type { CommandPaletteProps } from "./command-palette/command-palette.tsx";
