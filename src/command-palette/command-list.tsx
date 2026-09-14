@@ -3,9 +3,11 @@ import type { Command } from "../index.ts";
 import { useCommandPaletteContext } from "./command-palette-context.tsx";
 import { cn } from "./cn.ts";
 
-export interface CommandListProps extends ComponentPropsWithoutRef<"div"> {}
+export interface CommandListProps extends ComponentPropsWithoutRef<"div"> {
+  itemClassName?: string;
+}
 
-export function CommandList({ className, children, ...rest }: CommandListProps) {
+export function CommandList({ className, itemClassName, children, ...rest }: CommandListProps) {
   const { commands, close } = useCommandPaletteContext();
 
   return (
@@ -13,7 +15,12 @@ export function CommandList({ className, children, ...rest }: CommandListProps) 
       {commands.length === 0
         ? (children ?? <CommandEmpty>No commands found</CommandEmpty>)
         : commands.map((command) => (
-            <CommandListItem key={command.id} command={command} close={close} />
+            <CommandListItem
+              key={command.id}
+              command={command}
+              close={close}
+              className={itemClassName}
+            />
           ))}
     </div>
   );
@@ -28,16 +35,17 @@ export function CommandEmpty({ className, ...rest }: CommandEmptyProps) {
 interface CommandListItemProps {
   command: Command;
   close: () => void;
+  className?: string;
 }
 
-function CommandListItem({ command, close }: CommandListItemProps) {
+function CommandListItem({ command, close, className }: CommandListItemProps) {
   function select(): void {
     void command.execute();
     close();
   }
 
   return (
-    <button type="button" className="cmdora-item" onClick={select}>
+    <button type="button" className={cn("cmdora-item", className)} onClick={select}>
       {command.name}
     </button>
   );
