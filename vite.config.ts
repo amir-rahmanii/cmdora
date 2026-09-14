@@ -8,9 +8,7 @@ export default defineConfig({
   test: {
     environment: "jsdom",
   },
-  pack: {
-    exports: true,
-  },
+  pack: { deps: { resolveDepSubpath: true }, exports: true },
   lint: {
     // Declaration files crash the react/refs JS plugin (issue upstream in oxlint).
     ignorePatterns: ["**/*.d.ts"],

@@ -42,7 +42,6 @@
     "@types/react": "19.3.0",
     "@types/react-dom": "19.3.0",
     "jsdom": "30.0.1",
-    "oxlint": "1.81.0",
     "react": "19.3.0",
     "react-dom": "19.3.0",
     "semantic-release": "25.0.9",
