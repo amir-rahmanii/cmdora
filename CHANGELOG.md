@@ -1,3 +1,9 @@
+## [1.0.4](https://github.com/amir-rahmanii/cmdora/compare/v1.0.3...v1.0.4) (2026-09-14)
+
+### Bug Fixes
+
+- let consumer className overrides win without !important ([b96162b](https://github.com/amir-rahmanii/cmdora/commit/b96162b047848b41f3f777afcfe2e2575f88b7c1))
+
 ## [1.0.3](https://github.com/amir-rahmanii/cmdora/compare/v1.0.2...v1.0.3) (2026-09-13)
 
 ### Bug Fixes
