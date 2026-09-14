@@ -48,6 +48,14 @@ function App() {
 
 Press `Ctrl + K` on Windows/Linux or `Cmd + K` on macOS to open the palette.
 
+`CommandList` shows a default "No commands found" message when there are no matches. Pass `CommandEmpty` as a child to customize it:
+
+```tsx
+<CommandList>
+  <CommandEmpty>No matching commands. Try a different search.</CommandEmpty>
+</CommandList>
+```
+
 ## Customization
 
 Cmdora includes default styles out of the box and is fully customizable. Override the default styles or use Tailwind CSS, CSS Modules, plain CSS, or any other styling solution you prefer.
