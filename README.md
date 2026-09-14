@@ -72,7 +72,6 @@ All components support their relevant native HTML props and customization option
 - `CommandInput`
 - `CommandList`
 - `CommandEmpty`
-- `Command`
 
 ## License
 
