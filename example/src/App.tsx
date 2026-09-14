@@ -103,6 +103,29 @@ function StatCards({ message, count, isDark }: StatCardsProps) {
   );
 }
 
+function PageFooter() {
+  return (
+    <footer className="page-footer">
+      <a
+        className="footer-link"
+        href="https://github.com/amir-rahmanii/cmdora"
+        target="_blank"
+        rel="noreferrer"
+      >
+        GitHub
+      </a>
+      <a
+        className="footer-link"
+        href="https://www.npmjs.com/package/cmdora"
+        target="_blank"
+        rel="noreferrer"
+      >
+        npm
+      </a>
+    </footer>
+  );
+}
+
 export function App(): ReactNode {
   const [message, setMessage] = useState("No command run yet.");
   const [count, setCount] = useState(0);
@@ -182,6 +205,8 @@ export function App(): ReactNode {
           <NoMatchingCommands />
         </CommandList>
       </CommandPalette>
+
+      <PageFooter />
     </main>
   );
 }
