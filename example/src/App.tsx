@@ -6,125 +6,14 @@ import {
   CommandPalette,
   useCommandPalette,
   type Command,
-  type CommandEmptyProps,
 } from "cmdora";
-
-// Cmdora ships CommandInput as a plain, unopinionated input: no icon, no
-// wrapper. This SVG and the wrapper below live entirely in the example to
-// demonstrate how a consumer composes their own UI around it.
-function SearchIcon() {
-  return (
-    <svg
-      className="example-search-icon"
-      width="16"
-      height="16"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-      focusable="false"
-    >
-      <circle cx="11" cy="11" r="7" />
-      <line x1="21" y1="21" x2="16.65" y2="16.65" />
-    </svg>
-  );
-}
-
-// Demonstrates customizing CommandList's empty state: CommandEmpty is the
-// library's default-styled building block, and CommandEmptyProps lets this
-// wrapper stay fully typed while overriding only its content.
-function NoMatchingCommands(props: CommandEmptyProps) {
-  return <CommandEmpty {...props}>No matching commands. Try a different search.</CommandEmpty>;
-}
-
-function usePrefersDarkColorScheme(): boolean {
-  const [prefersDark, setPrefersDark] = useState(
-    () => window.matchMedia("(prefers-color-scheme: dark)").matches,
-  );
-
-  useEffect(() => {
-    const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
-
-    function handleChange(event: MediaQueryListEvent): void {
-      setPrefersDark(event.matches);
-    }
-
-    mediaQuery.addEventListener("change", handleChange);
-    return () => {
-      mediaQuery.removeEventListener("change", handleChange);
-    };
-  }, []);
-
-  return prefersDark;
-}
+import { SearchIcon } from "./components/search-icon.tsx";
+import { PageHeader } from "./components/page-header.tsx";
+import { StatCards } from "./components/stat-cards.tsx";
+import { PageFooter } from "./components/page-footer.tsx";
+import { usePrefersDarkColorScheme } from "./hooks/use-prefers-dark-color-scheme.ts";
 
 type ThemeOverride = "light" | "dark" | null;
-
-function PageHeader() {
-  return (
-    <header className="page-header">
-      <div className="brand">
-        <span className="brand-mark">⌘</span>
-        <span className="brand-name">Cmdora Example</span>
-        <span className="badge">Styled by default</span>
-      </div>
-      <p className="tagline">
-        A lightweight command palette for React — styled by default, customizable when needed.
-      </p>
-    </header>
-  );
-}
-
-interface StatCardsProps {
-  message: string;
-  count: number;
-  isDark: boolean;
-}
-
-function StatCards({ message, count, isDark }: StatCardsProps) {
-  return (
-    <section className="cards">
-      <article className="card">
-        <span className="card-label">Message</span>
-        <p className="card-value">{message}</p>
-      </article>
-      <article className="card">
-        <span className="card-label">Counter</span>
-        <p className="card-value">{count}</p>
-      </article>
-      <article className="card">
-        <span className="card-label">Theme</span>
-        <p className="card-value">{isDark ? "Dark" : "Light"}</p>
-      </article>
-    </section>
-  );
-}
-
-function PageFooter() {
-  return (
-    <footer className="page-footer">
-      <a
-        className="footer-link"
-        href="https://github.com/amir-rahmanii/cmdora"
-        target="_blank"
-        rel="noreferrer"
-      >
-        GitHub
-      </a>
-      <a
-        className="footer-link"
-        href="https://www.npmjs.com/package/cmdora"
-        target="_blank"
-        rel="noreferrer"
-      >
-        npm
-      </a>
-    </footer>
-  );
-}
 
 export function App(): ReactNode {
   const [message, setMessage] = useState("No command run yet.");
@@ -202,7 +91,7 @@ export function App(): ReactNode {
           <CommandInput className="example-input" placeholder="Search commands..." autoFocus />
         </div>
         <CommandList>
-          <NoMatchingCommands />
+          <CommandEmpty>No matching commands. Try a different search.</CommandEmpty>
         </CommandList>
       </CommandPalette>
 
