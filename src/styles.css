@@ -1,84 +1,86 @@
-.cmdora-backdrop {
-  position: fixed;
-  inset: 0;
-  z-index: 50;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 1.5rem;
-  background: rgba(0, 0, 0, 0.45);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
-}
+@layer base {
+  .cmdora-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+    background: rgba(0, 0, 0, 0.45);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+  }
 
-.cmdora-dialog {
-  width: 100%;
-  max-width: 32rem;
-  max-height: min(28rem, 80vh);
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  border-radius: 12px;
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  background: #ffffff;
-  color: #111111;
-  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.25);
-  font-family:
-    system-ui,
-    -apple-system,
-    "Segoe UI",
-    sans-serif;
-}
+  .cmdora-dialog {
+    width: 100%;
+    max-width: 32rem;
+    max-height: min(28rem, 80vh);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    border-radius: 12px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    background: #ffffff;
+    color: #111111;
+    box-shadow: 0 20px 45px rgba(0, 0, 0, 0.25);
+    font-family:
+      system-ui,
+      -apple-system,
+      "Segoe UI",
+      sans-serif;
+  }
 
-.cmdora-input {
-  width: 100%;
-  border: none;
-  outline: none;
-  background: transparent;
-  color: inherit;
-  font: inherit;
-  font-size: 1rem;
-  padding-block: 0.9rem;
-  padding-inline: 1rem;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-}
+  .cmdora-input {
+    width: 100%;
+    border: none;
+    outline: none;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    font-size: 1rem;
+    padding-block: 0.9rem;
+    padding-inline: 1rem;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  }
 
-.cmdora-input::placeholder {
-  color: rgba(0, 0, 0, 0.4);
-}
+  .cmdora-input::placeholder {
+    color: rgba(0, 0, 0, 0.4);
+  }
 
-.cmdora-list {
-  overflow-y: auto;
-  padding: 0.5rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.15rem;
-}
+  .cmdora-list {
+    overflow-y: auto;
+    padding: 0.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+  }
 
-.cmdora-empty {
-  margin: 0;
-  padding: 2rem 1rem;
-  text-align: center;
-  font-size: 0.9rem;
-  color: rgba(0, 0, 0, 0.45);
-}
+  .cmdora-empty {
+    margin: 0;
+    padding: 2rem 1rem;
+    text-align: center;
+    font-size: 0.9rem;
+    color: rgba(0, 0, 0, 0.45);
+  }
 
-.cmdora-item {
-  display: block;
-  width: 100%;
-  border: none;
-  padding: 0.6rem 0.75rem;
-  border-radius: 8px;
-  cursor: pointer;
-  font: inherit;
-  font-size: 0.95rem;
-  text-align: start;
-  background: none;
-  color: inherit;
-}
+  .cmdora-item {
+    display: block;
+    width: 100%;
+    border: none;
+    padding: 0.6rem 0.75rem;
+    border-radius: 8px;
+    cursor: pointer;
+    font: inherit;
+    font-size: 0.95rem;
+    text-align: start;
+    background: none;
+    color: inherit;
+  }
 
-.cmdora-item:hover,
-.cmdora-item:focus-visible {
-  background: rgba(0, 0, 0, 0.06);
-  outline: none;
+  .cmdora-item:hover,
+  .cmdora-item:focus-visible {
+    background: rgba(0, 0, 0, 0.06);
+    outline: none;
+  }
 }

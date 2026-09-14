@@ -52,7 +52,7 @@ Press `Ctrl + K` on Windows/Linux or `Cmd + K` on macOS to open the palette.
 
 Cmdora includes default styles out of the box and is fully customizable. Override the default styles or use Tailwind CSS, CSS Modules, plain CSS, or any other styling solution you prefer.
 
-`CommandPalette` supports `className` and `backdropClassName` for customizing the dialog and backdrop.
+`CommandPalette` supports `className` and `backdropClassName` for customizing the dialog and backdrop. `CommandList` supports `itemClassName` for overriding command item styles.
 
 All components support their relevant native HTML props and customization options.
 

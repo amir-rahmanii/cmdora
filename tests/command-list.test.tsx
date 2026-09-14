@@ -137,6 +137,24 @@ test("CommandEmpty renders with the default class and supports a custom classNam
   expect(empty?.className).toContain("my-empty");
 });
 
+test("CommandList applies itemClassName to rendered command items", () => {
+  const commands = [namedCommand("a", "Say hello")];
+
+  render(
+    <CmdoraProvider>
+      <CommandPalette commands={commands}>
+        <CommandList itemClassName="my-item" />
+      </CommandPalette>
+    </CmdoraProvider>,
+  );
+
+  openPalette();
+
+  const item = document.body.querySelector("button.cmdora-item");
+  expect(item?.className).toContain("cmdora-item");
+  expect(item?.className).toContain("my-item");
+});
+
 test("CommandList does not show the empty state when commands match", () => {
   const commands = [namedCommand("a", "Say hello")];
 
