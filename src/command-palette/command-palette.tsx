@@ -1,7 +1,9 @@
 import {
+  useCallback,
   useEffect,
   useMemo,
   useRef,
+  useState,
   useSyncExternalStore,
   type ComponentPropsWithoutRef,
   type ReactNode,
@@ -10,6 +12,8 @@ import { createPortal } from "react-dom";
 import type { Command } from "../index.ts";
 import { useCommandState } from "./state-context.ts";
 import { filterCommands } from "./search.ts";
+import { resolveActiveId } from "./navigation.ts";
+import { usePaletteBehavior } from "./use-palette-behavior.ts";
 import { CommandPaletteContext } from "./command-palette-context.tsx";
 import { cn } from "./cn.ts";
 import "../styles.css";
@@ -35,43 +39,39 @@ export function CommandPalette({
 
   const dialogRef = useRef<HTMLDivElement | null>(null);
 
+  const [rawActiveId, setRawActiveId] = useState<string | null>(null);
+  const activeId = resolveActiveId(filteredCommands, rawActiveId);
+
+  const commandsRef = useRef(filteredCommands);
+  const activeIdRef = useRef(activeId);
+
   useEffect(() => {
-    if (!isOpen) {
-      return;
-    }
+    commandsRef.current = filteredCommands;
+  }, [filteredCommands]);
 
-    const previouslyFocused = document.activeElement as HTMLElement | null;
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
+  useEffect(() => {
+    activeIdRef.current = activeId;
+  }, [activeId]);
 
-    dialogRef.current?.querySelector<HTMLInputElement>("input")?.focus();
+  const close = useCallback(() => state.close(), [state]);
 
-    function handleKeyDown(event: KeyboardEvent): void {
-      if (event.key === "Escape") {
-        state.close();
-      }
-    }
-
-    function handlePointerDown(event: MouseEvent): void {
-      if (dialogRef.current && !dialogRef.current.contains(event.target as Node)) {
-        state.close();
-      }
-    }
-
-    document.addEventListener("keydown", handleKeyDown);
-    document.addEventListener("mousedown", handlePointerDown);
-
-    return () => {
-      document.removeEventListener("keydown", handleKeyDown);
-      document.removeEventListener("mousedown", handlePointerDown);
-      document.body.style.overflow = previousOverflow;
-      previouslyFocused?.focus();
-    };
-  }, [isOpen, state]);
+  usePaletteBehavior({
+    isOpen,
+    dialogRef,
+    commandsRef,
+    activeIdRef,
+    setActiveId: setRawActiveId,
+    close,
+  });
 
   const contextValue = useMemo(
-    () => ({ commands: filteredCommands, close: () => state.close() }),
-    [filteredCommands, state],
+    () => ({
+      commands: filteredCommands,
+      close,
+      activeId,
+      setActiveId: setRawActiveId,
+    }),
+    [filteredCommands, close, activeId, setRawActiveId],
   );
 
   if (!isOpen) {

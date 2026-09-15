@@ -78,9 +78,16 @@
     color: inherit;
   }
 
-  .cmdora-item:hover,
-  .cmdora-item:focus-visible {
-    background: rgba(0, 0, 0, 0.06);
+  .cmdora-item:not(:disabled):hover,
+  .cmdora-item:not(:disabled):focus-visible,
+  .cmdora-item[data-active="true"] {
+    background: rgba(0, 0, 0, 0.08);
     outline: none;
+  }
+
+  .cmdora-item:disabled {
+    cursor: not-allowed;
+    opacity: 0.45;
+    pointer-events: none;
   }
 }

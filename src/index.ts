@@ -2,6 +2,7 @@ export interface Command {
   id: string;
   name: string;
   execute: () => void | Promise<void>;
+  disabled?: boolean;
 }
 
 export { CmdoraProvider } from "./command-palette/provider.tsx";

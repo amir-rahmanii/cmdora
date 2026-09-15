@@ -39,6 +39,15 @@ export default defineConfig({
         },
       },
       {
+        // CommandList renders each command as a real, independently focusable/clickable
+        // <button> (see command-list.test.tsx); native <select>/<option> can't host that,
+        // so the listbox/option ARIA roles are intentional.
+        files: ["src/command-palette/command-list.tsx"],
+        rules: {
+          "jsx-a11y/prefer-tag-over-role": "off",
+        },
+      },
+      {
         // Autofocusing the search field is the expected UX for a Ctrl+K command
         // palette: the dialog only opens in direct response to a user action.
         files: ["example/src/App.tsx", "tests/command-input.test.tsx"],
