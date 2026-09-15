@@ -1,6 +1,6 @@
 {
   "name": "cmdora",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "A customizable React command palette powered by Ctrl + K.",
   "homepage": "https://github.com/amir-rahmanii/cmdora#readme",
   "bugs": {

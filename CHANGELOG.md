@@ -1,3 +1,9 @@
+## [1.1.1](https://github.com/amir-rahmanii/cmdora/compare/v1.1.0...v1.1.1) (2026-09-15)
+
+### Bug Fixes
+
+- relax react peer dependency range to >=19.0.0 ([c0edb7a](https://github.com/amir-rahmanii/cmdora/commit/c0edb7ab9979b1427100b01ffe3646e458bd9185))
+
 # [1.1.0](https://github.com/amir-rahmanii/cmdora/compare/v1.0.4...v1.1.0) (2026-09-15)
 
 ### Features
