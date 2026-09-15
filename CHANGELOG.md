@@ -1,3 +1,9 @@
+# [1.1.0](https://github.com/amir-rahmanii/cmdora/compare/v1.0.4...v1.1.0) (2026-09-15)
+
+### Features
+
+- add arrow-key navigation to command list ([417b689](https://github.com/amir-rahmanii/cmdora/commit/417b689befa94c33e1bee721d8deda619dbb2c80))
+
 ## [1.0.4](https://github.com/amir-rahmanii/cmdora/compare/v1.0.3...v1.0.4) (2026-09-14)
 
 ### Bug Fixes
