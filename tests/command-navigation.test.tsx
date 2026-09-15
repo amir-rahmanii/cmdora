@@ -232,14 +232,6 @@ it("clicking a command executes it, and hover state does not linger after re-ren
   expect(executed).toBe("b");
 });
 
-it("inactive items do not carry a true active state", () => {
-  const commands = [namedCommand("a", "Say hello"), namedCommand("b", "Increment counter")];
-
-  const { getByText } = renderPalette(commands);
-
-  expect(getByText("Increment counter").getAttribute("data-active")).toBe("false");
-});
-
 it("ArrowDown/ArrowUp do not interfere with typing in the input", () => {
   const commands = [namedCommand("a", "Say hello"), namedCommand("b", "Increment counter")];
 

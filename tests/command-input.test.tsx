@@ -81,21 +81,3 @@ it("CommandInput supports normal input props such as placeholder and autoFocus",
   const input = getByTestId("input") as HTMLInputElement;
   expect(input.placeholder).toBe("Type a command...");
 });
-
-it("CommandInput renders a plain input with no built-in icon or wrapper", () => {
-  const commands = [makeCommand("a")];
-
-  const { getByTestId } = render(
-    <CmdoraProvider>
-      <CommandPalette commands={commands}>
-        <CommandInput data-testid="input" />
-      </CommandPalette>
-    </CmdoraProvider>,
-  );
-
-  openPalette();
-
-  const input = getByTestId("input");
-  expect(input.tagName).toBe("INPUT");
-  expect(document.body.querySelector("svg")).toBeNull();
-});

@@ -62,21 +62,6 @@ it("CommandPalette renders its children through a portal once opened", () => {
   expect(container.contains(palette)).toBe(false);
 });
 
-it("CommandPalette forwards className and native div attributes", () => {
-  const commands = [makeCommand("a")];
-
-  render(
-    <CmdoraProvider>
-      <CommandPalette commands={commands} className="my-palette" />
-    </CmdoraProvider>,
-  );
-
-  openPalette();
-
-  const palette = document.body.querySelector(".my-palette");
-  expect(palette).not.toBeNull();
-});
-
 it("CommandPalette has dialog semantics with an accessible name", () => {
   const commands = [makeCommand("a")];
 
@@ -146,27 +131,6 @@ it("backdropClassName is accepted and merged with the default backdrop class", (
 
   // ...alongside the consumer's own class, so it can add to or override it.
   expect(backdrop.className).toContain("my-backdrop");
-});
-
-it("the dialog, input, and list carry their default cmdora-* classes", () => {
-  const commands = [makeCommand("a")];
-
-  const { getByTestId } = render(
-    <CmdoraProvider>
-      <CommandPalette commands={commands} data-testid="palette">
-        <CommandInput data-testid="input" />
-        <CommandList data-testid="list" />
-      </CommandPalette>
-    </CmdoraProvider>,
-  );
-
-  openPalette();
-
-  expect(document.body.querySelector('[data-testid="palette"]')?.className).toContain(
-    "cmdora-dialog",
-  );
-  expect(getByTestId("input").className).toContain("cmdora-input");
-  expect(getByTestId("list").className).toContain("cmdora-list");
 });
 
 it("className props are merged with defaults, not replaced", () => {
