@@ -6,7 +6,7 @@ import type { ReactNode } from "react";
 export function SearchIcon(): ReactNode {
   return (
     <svg
-      className="example-search-icon"
+      className="shrink-0 opacity-50"
       width="16"
       height="16"
       viewBox="0 0 24 24"

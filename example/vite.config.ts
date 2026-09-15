@@ -1,7 +1,9 @@
 import { defineConfig } from "vite-plus";
 import { defineOxlintConfig } from "@fullstacksjs/oxlint-config";
+import tailwindcss from "@tailwindcss/vite";
 
 export default defineConfig({
+  plugins: [tailwindcss()],
   lint: {
     extends: [
       defineOxlintConfig({

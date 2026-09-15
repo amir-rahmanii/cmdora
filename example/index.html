@@ -1,11 +1,19 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" class="scheme-light-dark">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Cmdora Example</title>
+    <script>
+      document.documentElement.dataset.theme = window.matchMedia("(prefers-color-scheme: dark)")
+        .matches
+        ? "dark"
+        : "light";
+    </script>
   </head>
-  <body>
+  <body
+    class="m-0 bg-[#f4f4f6] px-3 py-7 font-sans text-[#16161a] transition-colors duration-150 min-[30rem]:px-5 min-[30rem]:py-12 dark:bg-[#0b0b0d] dark:text-[#f2f2f4]"
+  >
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
